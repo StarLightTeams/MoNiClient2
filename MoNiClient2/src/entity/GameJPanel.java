@@ -57,11 +57,10 @@ public class GameJPanel extends JPanel{
 	
 	public void doThing() {
 		
-		String ip = sIp.getText().trim();
-		int port = Integer.parseInt(sPort.getText().trim());
+		final String ip = sIp.getText().trim();
+		final int port = Integer.parseInt(sPort.getText().trim());
 		//连接按钮监听
 		conBtn.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(loginFlag) {
 					//不完整 ,有待完善关闭客户端
@@ -91,7 +90,6 @@ public class GameJPanel extends JPanel{
 		
 		//清空按钮监听
 		delBtn.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				jtp.clear();
 				if(!loginFlag){
@@ -102,7 +100,6 @@ public class GameJPanel extends JPanel{
 		
 		//发送按钮监听
 		sendBtn.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(loginFlag) {
 					String str = text.getText();
@@ -115,7 +112,6 @@ public class GameJPanel extends JPanel{
 		
 		//连续发送监听
 		sendConBtn.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(loginFlag) {
 					String str = text.getText();
@@ -128,7 +124,6 @@ public class GameJPanel extends JPanel{
 		
 		//不在发送按钮监听
 		stopBtn.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				clientTools.sendThread = null;
 				sendThread.stop();

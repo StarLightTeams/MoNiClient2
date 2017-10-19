@@ -69,7 +69,6 @@ public class ClientTools {
 			this.jtp = jtp;
 		}
 
-		@Override
 		public synchronized void run() {
 			while(true) {
 				try {
@@ -95,7 +94,6 @@ public class ClientTools {
 			this.jtp = jtp;
 		}
 		
-		@Override
 		public synchronized void run() {
 			while(true) {
 				try {
