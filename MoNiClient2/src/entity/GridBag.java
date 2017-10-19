@@ -1,6 +1,9 @@
 package entity;
 
 import java.awt.GridBagConstraints;
+/**
+ * 作废(但可以参考)
+ */
 
 public class GridBag extends GridBagConstraints {
 	

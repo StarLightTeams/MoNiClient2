@@ -20,25 +20,39 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.DefaultCaret;
 
 import clienttool.ClientTools;
 import config.ClientConfig;
 
 public class GameJPanel extends JPanel{
 	
+	//连接
 	JTextField sIp;
 	JTextField sPort;
+	JButton conBtn;
+	JLabel conLab;
+
+	//发送
 	JTextField text;
 	JButton sendBtn;
-	JButton conBtn;
+	JButton sendConBtn;
+	JButton stopBtn;
+	
+	//中间文本框
 	JTextPaneUP jtp;
 	JScrollPane jsp;
 	JButton delBtn;
-	JButton sendConBtn;
-	JLabel conLab;
-	JButton stopBtn;
+	JButton filtHeartBtn; 
+	
+	//登录
+	JTextField userId;
+	JTextField userPassword;
+	JButton loginBtn;
+	JLabel loginInfo;
 	
 	boolean loginFlag = false;
 	boolean loopFlag = true;
@@ -125,8 +139,12 @@ public class GameJPanel extends JPanel{
 		//不在发送按钮监听
 		stopBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clientTools.sendThread = null;
-				sendThread.stop();
+				if(loginFlag) {
+					clientTools.sendThread = null;
+					sendThread.stop();
+				}else {
+					jtp.addErrString("先进行服务器连接");
+				}
 			}
 		});
 	}
@@ -149,62 +167,102 @@ public class GameJPanel extends JPanel{
 		return true;
 	}
 	
+	/**
+	 * 加载控件
+	 */
 	public void loadUI() {
-		GridBagLayout gl = new GridBagLayout();
-		this.setLayout(gl);
+		//设置为空布局(也就是相对布局)
+		this.setLayout(null);
 		
 		JLabel lab = new JLabel("服务器ip:");
 		this.add(lab);
-		gl.setConstraints(lab, new GridBag(0, 0).setFill(GridBag.BOTH));
+		lab.setBounds(10,10,70,30);
 		
 		sIp = new JTextField(10);
 		sIp.setText(ClientConfig.serviceHost);
 		this.add(sIp);
-		gl.setConstraints(sIp, new GridBag(1,0,2,1).setFill(GridBag.BOTH));
+		sIp.setBounds(70,10,100,30);
 		
 		lab = new JLabel("服务器端口:");
-		gl.setConstraints(lab, new GridBag(3,0).setFill(GridBag.BOTH));
 		this.add(lab);
+		lab.setBounds(180,10,70,30); 
 		
 		sPort = new JTextField(10);
 		sPort.setText(ClientConfig.servicePort+"");
-		gl.setConstraints(sPort, new GridBag(4,0,2,1).setFill(GridBag.BOTH));
 		this.add(sPort);
+		sPort.setBounds(260,10,100,30);
 		
 		conBtn = new JButton("连接");
-		gl.setConstraints(conBtn, new GridBag(6,0).setFill(GridBag.BOTH));
 		this.add(conBtn);
+		conBtn.setBounds(370,10,60,30);
 		
 		conLab = new JLabel();
-		gl.setConstraints(conLab, new GridBag(7,0).setFill(GridBag.BOTH));
 		this.add(conLab);
+		conLab.setBounds(460,10,80,30);
+	
+		lab = new JLabel("用户名id:");
+		this.add(lab);
+		lab.setBounds(10, 50, 70, 30);
+		
+		userId= new JTextField(10);
+		this.add(userId);
+		userId.setBounds(70,50,100,30);
+		
+		lab = new JLabel("用户名密码:");
+		this.add(lab);
+		lab.setBounds(180,50,70,30); 
+		
+		userPassword = new JTextField(10);
+		this.add(userPassword);
+		userPassword.setBounds(260,50,100,30);
+		
+		loginBtn = new JButton("登入");
+		this.add(loginBtn);
+		loginBtn.setBounds(370,50,60,30);
+		
+		loginInfo = new JLabel();
+		this.add(loginInfo);
+		loginInfo.setBounds(460,50,80,30);
 		
 		jtp = new JTextPaneUP();
 		jtp.setEditable(false);//不可编辑
-		jtp.setPreferredSize(new Dimension(450, 180));//只有这个方法设置其大小
-		gl.setConstraints(jtp, new GridBag(0,1,6,1).setFill(GridBag.BOTH));
+		//jtp垂直滚动条一直在下面
+		DefaultCaret caret = (DefaultCaret) jtp.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+//		jtp.setPreferredSize(new Dimension(450, 180));//只有这个方法设置其大小
 		jsp = new JScrollPane(jtp);
+		jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(jsp);
+		jsp.setBounds(10,90,420,280);
 		
-		delBtn = new JButton("清空");
-		gl.setConstraints(delBtn, new GridBag(6,1,5,1).setFill(GridBag.BOTH));
+		delBtn = new JButton("清空数据");
 		this.add(delBtn);
+		delBtn.setBounds(440,90,100,30);
+		
+		filtHeartBtn = new JButton("过滤心跳");
+		this.add(filtHeartBtn);
+		filtHeartBtn.setBounds(440,130,100,30);
 
 		text = new JTextField(25);
-		gl.setConstraints(text, new GridBag(0,2,4,1).setFill(GridBag.BOTH));
 		this.add(text);
+		text.setBounds(10,375,260,30);
 		
 		sendBtn = new JButton("发送");
-		gl.setConstraints(sendBtn, new GridBag(6,2).setFill(GridBag.BOTH));
 		this.add(sendBtn);
+		sendBtn.setBounds(280,375,60,30);
 		
 		sendConBtn = new JButton("连续发送");
-		gl.setConstraints(sendConBtn, new GridBag(6,2).setFill(GridBag.BOTH));
 		this.add(sendConBtn);
+		sendConBtn.setBounds(350,375,90,30);
 		
 		stopBtn = new JButton("不再发送");
-		gl.setConstraints(stopBtn, new GridBag(7,2).setFill(GridBag.BOTH));
 		this.add(stopBtn);
+		stopBtn.setBounds(450, 375, 90, 30);
+	}
+	
+	//连接布局
+	public void conLayout() {
 		
 	}
+	
 }

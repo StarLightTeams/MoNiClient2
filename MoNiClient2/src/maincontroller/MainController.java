@@ -16,7 +16,6 @@ public class MainController {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		GameJPanel panel = new GameJPanel();
-		panel.setLayout(new FlowLayout(0));
 		
 		frame.add(panel);
 		frame.setResizable(false);

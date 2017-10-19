@@ -34,7 +34,6 @@ public class ClientTools {
 		if(receiveThread == null) {
 			receiveThread = new Thread(new Receive(jtp),clientName+"r");
 			receiveThread.setUncaughtExceptionHandler(new ThreadException());
-
 		}
 		receiveThread.start();
 		return receiveThread;
@@ -72,7 +71,7 @@ public class ClientTools {
 		public synchronized void run() {
 			while(true) {
 				try {
-					byte[] b = new byte[10240];
+					byte[] b = new byte[1024];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
 					jtp.addString("["+clientName+"r"+"]:"+new String(b));
