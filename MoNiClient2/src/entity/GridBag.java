@@ -10,7 +10,6 @@ public class GridBag extends GridBagConstraints {
 	public GridBag(int gridx,int gridy) {
 		this.gridy = gridy;
 		this.gridx = gridx;
-		this.gridwidth = gridwidth;
 	}
 	
 	public GridBag(int gridx,int gridy,int gridwidth,int gridheight) {

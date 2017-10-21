@@ -27,6 +27,7 @@ import javax.swing.text.DefaultCaret;
 
 import clienttool.ClientTools;
 import config.ClientConfig;
+import entity.rule.agreement.UnknownCommand;
 
 public class GameJPanel extends JPanel{
 	
@@ -117,7 +118,7 @@ public class GameJPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				if(loginFlag) {
 					String str = text.getText();
-					clientTools.sendOnceMessage(str,jtp);
+					clientTools.sendOnceMessage(new UnknownCommand(),str,jtp);
 				}else {
 					jtp.addErrString("先进行服务器连接");
 				}
@@ -129,7 +130,7 @@ public class GameJPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				if(loginFlag) {
 					String str = text.getText();
-					sendThread = clientTools.sendMessage(str,jtp);
+					sendThread = clientTools.sendMessage(new UnknownCommand(),str,jtp);
 				}else {
 					jtp.addErrString("先进行服务器连接");
 				}

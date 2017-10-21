@@ -9,17 +9,17 @@ import java.net.UnknownHostException;
 import javax.swing.JTextPane;
 
 import entity.JTextPaneUP;
+import entity.agrement.ICommand;
+import entity.rule.agreement.ConnectCommand;
 import thread.ThreadException;
+import tool.agreement.DataBuffer;
 
 /**
  * 客户端工具
- * @author Administrator
- *
  */
-public class ClientTools {
+public class ClientTools{
 	
 	public Socket s;
-	public String nameFlag = "2";
 	public Thread sendThread;
 	public Thread receiveThread;
 	public String clientName;
@@ -40,9 +40,9 @@ public class ClientTools {
 	}
 	
 	//发送连续数据
-	public Thread sendMessage(String str,JTextPaneUP jtp) {
+	public Thread sendMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		if(sendThread==null) {
-			sendThread = new Thread(new Send(str,jtp),clientName+"s");
+			sendThread = new Thread(new Send(iCommand,str,jtp),clientName+"s");
 			receiveThread.setUncaughtExceptionHandler(new ThreadException());
 		}
 		sendThread.start();
@@ -50,11 +50,12 @@ public class ClientTools {
 	}
 	
 	//发送数据
-	public void sendOnceMessage(String str,JTextPaneUP jtp) {
+	public void sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		try {
 			jtp.addString("["+clientName+"s"+"]:"+str);
 			OutputStream os = s.getOutputStream();
-			os.write(str.getBytes());
+			DataBuffer data = createAgreeMentMessage(iCommand, str);
+			os.write(data.readByte());
 			os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -74,7 +75,8 @@ public class ClientTools {
 					byte[] b = new byte[1024];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
-					jtp.addString("["+clientName+"r"+"]:"+new String(b));
+					DataBuffer data = getAgreeMentMessage(b);
+					jtp.addString("["+clientName+"r"+"]:"+new String(data.buffer));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -85,12 +87,13 @@ public class ClientTools {
 	}
 
 	class Send implements Runnable {
-		
 		String str;
 		JTextPaneUP jtp;
-		public Send(String str,JTextPaneUP jtp) {
+		ICommand iCommand;
+		public Send(ICommand iCommand,String str,JTextPaneUP jtp) {
 			this.str = str;
 			this.jtp = jtp;
+			this.iCommand = iCommand;
 		}
 		
 		public synchronized void run() {
@@ -98,7 +101,8 @@ public class ClientTools {
 				try {
 					jtp.addString("["+clientName+"s"+"]:"+str);
 					OutputStream os = s.getOutputStream();
-					os.write(str.getBytes());
+					DataBuffer data = createAgreeMentMessage(iCommand, str);
+					os.write(data.readByte());
 					os.flush();
 					try {
 						Thread.sleep(1000);
@@ -111,5 +115,28 @@ public class ClientTools {
 			}
 		}
 	}
+
+	/**
+	 * 创建协议信息
+	 * @param iCommand
+	 * @param str
+	 * @return
+	 */
+	public DataBuffer createAgreeMentMessage(ICommand iCommand,String str){
+		DataBuffer data = new DataBuffer();
+		iCommand.WriteToBuffer(data,str);
+		return data;
+	}
 	
+	/**
+	 * 接受协议信息
+	 * @param bytes
+	 * @return
+	 */
+	public DataBuffer getAgreeMentMessage(byte[] bytes) {
+		DataBuffer data = new DataBuffer();
+		char[] c =data.getChars(bytes);
+		System.out.println(new String(c));
+		return data;
+	}
 }
