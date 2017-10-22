@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import javax.swing.JTextPane;
 
 import entity.JTextPaneUP;
+import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.rule.agreement.ConnectCommand;
 import thread.ThreadException;
@@ -72,11 +73,22 @@ public class ClientTools{
 		public synchronized void run() {
 			while(true) {
 				try {
-					byte[] b = new byte[1024];
+					byte[] b = new byte[45056];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
 					DataBuffer data = getAgreeMentMessage(b);
-					jtp.addString("["+clientName+"r"+"]:"+new String(data.buffer));
+					ICommand icommand = new ICommand();
+					icommand.ReadBufferIp(data);
+					System.out.println(icommand.header.id);
+					System.out.println(icommand.header.length);
+					if (icommand.header.id == CommandID.Connect) {
+						ConnectCommand conect2 = new ConnectCommand();
+						conect2.header.id = icommand.header.id;
+						conect2.header.length = icommand.header.length;
+						conect2.ReadFromBufferBody(data);
+						jtp.addString("["+clientName+"r"+"]:"+new String(conect2.body));
+					}
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -136,7 +148,6 @@ public class ClientTools{
 	public DataBuffer getAgreeMentMessage(byte[] bytes) {
 		DataBuffer data = new DataBuffer();
 		char[] c =data.getChars(bytes);
-		System.out.println(new String(c));
 		return data;
 	}
 }
