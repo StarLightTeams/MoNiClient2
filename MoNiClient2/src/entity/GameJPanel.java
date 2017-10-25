@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.channels.AcceptPendingException;
+import java.util.logging.LoggingMXBean;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,7 +28,12 @@ import javax.swing.text.DefaultCaret;
 
 import clienttool.ClientTools;
 import config.ClientConfig;
+import entity.player.Player;
+import entity.rule.agreement.ConnectCommand;
+import entity.rule.agreement.LoginCommand;
+import entity.rule.agreement.LoginOutCommand;
 import entity.rule.agreement.UnknownCommand;
+import tool.JsonTools;
 
 public class GameJPanel extends JPanel{
 	
@@ -44,7 +50,7 @@ public class GameJPanel extends JPanel{
 	JButton stopBtn;
 	
 	//中间文本框
-	JTextPaneUP jtp;
+	static JTextPaneUP jtp;
 	JScrollPane jsp;
 	JButton delBtn;
 	JButton filtHeartBtn; 
@@ -52,11 +58,13 @@ public class GameJPanel extends JPanel{
 	//登录
 	JTextField userId;
 	JTextField userPassword;
-	JButton loginBtn;
-	JLabel loginInfo;
+	static JButton loginBtn;
+	static JLabel loginInfo;
 	
-	boolean loginFlag = false;
-	boolean loopFlag = true;
+	//连接标志
+	boolean conFlag = false;
+	//登录标志
+	static boolean loginFlag = false;
 	Socket socket = null;
 	
 	ClientTools clientTools = null;
@@ -77,7 +85,7 @@ public class GameJPanel extends JPanel{
 		//连接按钮监听
 		conBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(loginFlag) {
+				if(conFlag) {
 					//不完整 ,有待完善关闭客户端
 					try {
 						socket.close();
@@ -89,7 +97,7 @@ public class GameJPanel extends JPanel{
 				}else {
 					if(serviceConnect(ip,port)){
 						conLab.setText("连接成功");
-						loginFlag = true;
+						conFlag = true;
 						conBtn.setText("断开");
 						clientName = socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+":"+nameFlag; 
 						clientTools = new ClientTools(socket,clientName);
@@ -107,7 +115,7 @@ public class GameJPanel extends JPanel{
 		delBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				jtp.clear();
-				if(!loginFlag){
+				if(!conFlag){
 					conLab.setText("");
 				}
 			}
@@ -116,9 +124,9 @@ public class GameJPanel extends JPanel{
 		//发送按钮监听
 		sendBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(loginFlag) {
+				if(conFlag) {
 					String str = text.getText();
-					clientTools.sendOnceMessage(new UnknownCommand(),str,jtp);
+					clientTools.sendOnceMessage(new ConnectCommand(),str,jtp);
 				}else {
 					jtp.addErrString("先进行服务器连接");
 				}
@@ -128,9 +136,9 @@ public class GameJPanel extends JPanel{
 		//连续发送监听
 		sendConBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(loginFlag) {
+				if(conFlag) {
 					String str = text.getText();
-					sendThread = clientTools.sendMessage(new UnknownCommand(),str,jtp);
+					sendThread = clientTools.sendMessage(new ConnectCommand(),str,jtp);
 				}else {
 					jtp.addErrString("先进行服务器连接");
 				}
@@ -140,7 +148,7 @@ public class GameJPanel extends JPanel{
 		//不在发送按钮监听
 		stopBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(loginFlag) {
+				if(conFlag) {
 					clientTools.sendThread = null;
 					sendThread.stop();
 				}else {
@@ -148,6 +156,47 @@ public class GameJPanel extends JPanel{
 				}
 			}
 		});
+		
+		//登录监听
+		loginBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(conFlag) {
+					if(!loginFlag) {
+						//判断用户名密码是否为空
+						String userName = userId.getText().trim();
+						String password = userPassword.getText().trim();
+						if(!userName.equals("")&&!password.equals("")) {
+							//发送登录协议信息
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password)), jtp);
+						}else{
+							jtp.addErrString("用户名或密码不能为空");
+						}
+					}else {
+						//发送断开协议信息
+						clientTools.sendOnceMessage(new LoginOutCommand(),"退出登录", jtp);
+					}
+				}else {
+					jtp.addErrString("先进行服务器连接");
+				}
+			}
+		});
+	}
+	
+	//接受回调函数
+	public static void callBack(int type) {
+		if(type==ClientConfig.loginInSuccess) {
+			loginInfo.setText("登录成功");
+			loginBtn.setText("退出");
+			loginFlag = true;
+		}else if (type==ClientConfig.loginInError){
+			loginInfo.setText("登录失败");
+		}else if(type == ClientConfig.loginOutSuccess) {
+			loginInfo.setText("退出登录");
+			loginBtn.setText("登录");
+			loginFlag = false;
+		}else if(type == ClientConfig.loginOutError) {
+			jtp.addErrString("退出登录失败");
+		}
 	}
 	
 	/**
@@ -259,11 +308,6 @@ public class GameJPanel extends JPanel{
 		stopBtn = new JButton("不再发送");
 		this.add(stopBtn);
 		stopBtn.setBounds(450, 375, 90, 30);
-	}
-	
-	//连接布局
-	public void conLayout() {
-		
 	}
 	
 }

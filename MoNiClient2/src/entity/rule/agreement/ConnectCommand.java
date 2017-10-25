@@ -8,7 +8,7 @@ import entity.agrement.ICommand;
 /// 连接协议
 public class ConnectCommand extends ICommand{
 	
-	public String body = "";
+//	public String body = "";
 	public ConnectCommand(){
 		super(CommandID.Connect);
 	}
@@ -16,13 +16,13 @@ public class ConnectCommand extends ICommand{
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-	public void WriteBody(DataBuffer buffer,String str)
-	{
-		buffer.WriteString(str);
-	}
-	public void ReadBody(DataBuffer buffer)
-	{
-//		buffer.ReadChar();
-		body=buffer.ReadString();
-	}
+//	public void WriteBody(DataBuffer buffer,String str)
+//	{
+//		buffer.WriteString(str);
+//	}
+//	public void ReadBody(DataBuffer buffer)
+//	{
+////		buffer.ReadChar();
+//		body=buffer.ReadString();
+//	}
 }

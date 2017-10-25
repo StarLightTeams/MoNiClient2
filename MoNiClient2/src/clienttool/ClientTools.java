@@ -8,11 +8,14 @@ import java.net.UnknownHostException;
 
 import javax.swing.JTextPane;
 
+import config.ClientConfig;
+import entity.GameJPanel;
 import entity.JTextPaneUP;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.rule.agreement.ConnectCommand;
 import thread.ThreadException;
+import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
 
 /**
@@ -63,6 +66,7 @@ public class ClientTools{
 		}
 	}
 	
+	//接受数据
 	class Receive implements Runnable{
 		
 		JTextPaneUP jtp;
@@ -77,16 +81,21 @@ public class ClientTools{
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
 					DataBuffer data = getAgreeMentMessage(b);
-					ICommand icommand = new ICommand();
-					icommand.ReadBufferIp(data);
-					System.out.println(icommand.header.id);
-					System.out.println(icommand.header.length);
-					if (icommand.header.id == CommandID.Connect) {
-						ConnectCommand conect2 = new ConnectCommand();
-						conect2.header.id = icommand.header.id;
-						conect2.header.length = icommand.header.length;
-						conect2.ReadFromBufferBody(data);
-						jtp.addString("["+clientName+"r"+"]:"+new String(conect2.body));
+					ICommand icommand = AgreeMentTools.getICommand(data);
+					jtp.addString("["+clientName+"r"+"]:"+new String(icommand.body));
+					String dataInfo = new String(icommand.body);
+					if (icommand.header.id == CommandID.Login) {
+						if(dataInfo.equals("登录成功")) {
+							GameJPanel.callBack(ClientConfig.loginInSuccess);
+						}else if(dataInfo.equals("登录失败")) {
+							GameJPanel.callBack(ClientConfig.loginInError);
+						}
+					}else if(icommand.header.id == CommandID.LoginOut) {
+						if(dataInfo.equals("退出成功")) {
+							GameJPanel.callBack(ClientConfig.loginOutSuccess);
+						}else if(dataInfo.equals("退出失败")) {
+							GameJPanel.callBack(ClientConfig.loginOutError);
+						}
 					}
 					
 				} catch (IOException e) {

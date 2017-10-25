@@ -13,4 +13,16 @@ public class ClientConfig {
 	//屏幕初始出现位置
 	public static final int STARTX = 10;
 	public static final int STARTY = 10;
+	
+	//登录成功
+	public static final int loginInSuccess = 1;
+	//登录失败
+	public static final int loginInError = 2;
+	
+	//退出登录成功
+	public static final int loginOutSuccess = 3;
+	//退出登录失败
+	public static final int loginOutError = 4;
+
 }
+
