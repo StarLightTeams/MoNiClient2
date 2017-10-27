@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import javax.swing.JTextPane;
 
@@ -84,18 +85,27 @@ public class ClientTools{
 					ICommand icommand = AgreeMentTools.getICommand(data);
 					jtp.addString("["+clientName+"r"+"]:"+new String(icommand.body));
 					String dataInfo = new String(icommand.body);
-					if (icommand.header.id == CommandID.Login) {
-						if(dataInfo.equals("登录成功")) {
+					if (icommand.header.id == CommandID.Login) {//登录协议
+						if("登录成功".equals(dataInfo)) {
 							GameJPanel.callBack(ClientConfig.loginInSuccess);
-						}else if(dataInfo.equals("登录失败")) {
+						}else if("登录失败".equals(dataInfo)) {
 							GameJPanel.callBack(ClientConfig.loginInError);
 						}
-					}else if(icommand.header.id == CommandID.LoginOut) {
-						if(dataInfo.equals("退出成功")) {
+					}else if(icommand.header.id == CommandID.LoginOut) { //退出登录协议
+						if("退出成功".equals(dataInfo)) {
 							GameJPanel.callBack(ClientConfig.loginOutSuccess);
-						}else if(dataInfo.equals("退出失败")) {
+						}else if("退出失败".equals(dataInfo)) {
 							GameJPanel.callBack(ClientConfig.loginOutError);
 						}
+					}else if(icommand.header.id == CommandID.Register) {//注册协议
+						if("注册成功".equals(dataInfo)) {
+							
+						}else if("注册失败".equals(dataInfo)) {
+							
+						}
+					}else if(icommand.header.id == CommandID.GuestLogin) {
+						//拿到服务器给的游客名字,存放到本地,下次客户端先从本地拿取游客名字
+						GameJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
 					}
 					
 				} catch (IOException e) {
@@ -158,5 +168,39 @@ public class ClientTools{
 		DataBuffer data = new DataBuffer();
 		char[] c =data.getChars(bytes);
 		return data;
+	}
+	
+	/**
+	 * 获得游客名字
+	 */
+	public static String getGuestPeopleName() {
+		//字母数组(包含a~z的字母和数字)
+		char[] str = new char [26*2+10];
+		for(int i=0;i<26;i++) {
+			str[i] = (char)(65+i);
+		}
+		for(int i=0;i<26;i++) {
+			str[26+i] = (char)(97+i);
+		}
+		for(int i=0;i<10;i++) {
+			str[52+i] = (i+"").charAt(0);
+		}
+//		for(char s :str) {
+//			System.out.println(s);
+//		}
+		Random rand = new Random();
+		char[] name = new char[8];
+		String GuestName;
+		while(true){
+			int t;
+			for(int i=0;i<8;i++) {
+				t=rand.nextInt(62);
+				name[i] =str[t]; 
+			}
+			GuestName = new String(name);
+			//判断这个是否在数据库中存在,待完善
+			break;
+		}
+		return GuestName;
 	}
 }
