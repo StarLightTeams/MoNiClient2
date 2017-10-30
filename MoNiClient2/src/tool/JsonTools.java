@@ -1,6 +1,7 @@
 package tool;
 
 
+import entity.info.Info;
 import entity.player.Player;
 import net.sf.json.JSONObject;
 
@@ -26,8 +27,12 @@ public class JsonTools {
 			player.setPlayerName(jObject.getJSONObject("data").getString("playerName"));
 			player.setPassword(jObject.getJSONObject("data").getString("password"));
 			return player;
+		}else if("Info".equals(className)){
+			Info info = new Info();
+			info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
+			info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
+			return info;
 		}else {
-			
 			return null;
 		}
 		

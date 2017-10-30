@@ -4,6 +4,7 @@ package tool.agreement;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.rule.agreement.ConnectCommand;
+import entity.rule.agreement.GeneralInformationCommand;
 import entity.rule.agreement.GuestLoginCommand;
 import entity.rule.agreement.HeartCommand;
 import entity.rule.agreement.LoginCommand;
@@ -33,6 +34,8 @@ public class AgreeMentTools {
 			return new LoginOutCommand(id);
 		}else if(id == CommandID.Register) {//注册协议
 			return new RegisterCommand(id);
+		}else if(id == CommandID.GeneralInformation) {//普通信息协议
+			return new GeneralInformationCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -53,10 +56,12 @@ public class AgreeMentTools {
 			return CommandID.Login;
 		}else if(iCommand.getClass().equals(UnknownCommand.class)){//未知数据协议
 			return CommandID.Unknown;
-		}else if(iCommand.getClass().equals(UnknownCommand.class)){//退出登录协议
+		}else if(iCommand.getClass().equals(LoginOutCommand.class)){//退出登录协议
 			return CommandID.LoginOut;
-		}else if(iCommand.getClass().equals(UnknownCommand.class)){//注册协议
+		}else if(iCommand.getClass().equals(RegisterCommand.class)){//注册协议
 			return CommandID.Register;
+		}else if(iCommand.getClass().equals(UnknownCommand.class)){//普通信息协议
+			return CommandID.GeneralInformation;
 		}else {
 			//返回错误协议数据
 			return 0;

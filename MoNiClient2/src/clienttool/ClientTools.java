@@ -14,8 +14,10 @@ import entity.GameJPanel;
 import entity.JTextPaneUP;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
+import entity.info.Info;
 import entity.rule.agreement.ConnectCommand;
 import thread.ThreadException;
+import tool.JsonTools;
 import tool.agreement.AgreeMentTools;
 import tool.agreement.DataBuffer;
 
@@ -84,28 +86,33 @@ public class ClientTools{
 					DataBuffer data = getAgreeMentMessage(b);
 					ICommand icommand = AgreeMentTools.getICommand(data);
 					jtp.addString("["+clientName+"r"+"]:"+new String(icommand.body));
-					String dataInfo = new String(icommand.body);
+					Info info = (Info) JsonTools.parseJson(new String(icommand.body));
+					String headInfo = info.getHeadInfo();
+					String dataInfo = info.getDataInfo();
+					System.out.println("headInfo="+headInfo+",dataInfo="+dataInfo);
 					if (icommand.header.id == CommandID.Login) {//登录协议
-						if("登录成功".equals(dataInfo)) {
+						if("登录成功".equals(headInfo)) {
 							GameJPanel.callBack(ClientConfig.loginInSuccess);
-						}else if("登录失败".equals(dataInfo)) {
+						}else if("登录失败".equals(headInfo)) {
 							GameJPanel.callBack(ClientConfig.loginInError);
 						}
 					}else if(icommand.header.id == CommandID.LoginOut) { //退出登录协议
-						if("退出成功".equals(dataInfo)) {
+						if("退出成功".equals(headInfo)) {
 							GameJPanel.callBack(ClientConfig.loginOutSuccess);
-						}else if("退出失败".equals(dataInfo)) {
+						}else if("退出失败".equals(headInfo)) {
 							GameJPanel.callBack(ClientConfig.loginOutError);
 						}
 					}else if(icommand.header.id == CommandID.Register) {//注册协议
-						if("注册成功".equals(dataInfo)) {
-							
-						}else if("注册失败".equals(dataInfo)) {
-							
+						if("注册成功".equals(headInfo)) {
+							GameJPanel.callBack(ClientConfig.registerSuccess);
+						}else if("注册失败".equals(headInfo)) {
+							GameJPanel.callBack(ClientConfig.registerError, dataInfo);
 						}
-					}else if(icommand.header.id == CommandID.GuestLogin) {
+					}else if(icommand.header.id == CommandID.GuestLogin) {//游客登录协议
 						//拿到服务器给的游客名字,存放到本地,下次客户端先从本地拿取游客名字
 						GameJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
+					}else if(icommand.header.id == CommandID.GeneralInformation) {//普通信息协议
+						GameJPanel.callBack(ClientConfig.common,dataInfo);
 					}
 					
 				} catch (IOException e) {

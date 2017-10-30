@@ -45,6 +45,25 @@ public class JTextPaneUP extends JTextPane {
 		}
 	}
 	
+	/**
+	 * 增加带有颜色的字符串
+	 * @param str
+	 * @param c
+	 */
+	public void addString(String str,Color c) {
+		//得到编辑器关联类
+		Document doc = this.getDocument();
+		//属性类的容器类,用来放置属性
+		SimpleAttributeSet set = new SimpleAttributeSet();
+		StyleConstants.setForeground(set, c);
+		try {
+			doc.insertString(doc.getLength(), str+"\n",set);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+			System.out.println("写入字符串失败");
+		}
+	}
+	
 	
 	/**
 	 * 清空JTextPane中的显示
