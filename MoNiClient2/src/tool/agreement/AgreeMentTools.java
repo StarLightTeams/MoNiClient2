@@ -4,6 +4,10 @@ package tool.agreement;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.rule.agreement.ConnectCommand;
+import entity.rule.agreement.GameLoadingCommand;
+import entity.rule.agreement.GamePreparingCommand;
+import entity.rule.agreement.GamePreparingErrorCommand;
+import entity.rule.agreement.GameStartCommand;
 import entity.rule.agreement.GeneralInformationCommand;
 import entity.rule.agreement.GuestLoginCommand;
 import entity.rule.agreement.HeartCommand;
@@ -11,6 +15,9 @@ import entity.rule.agreement.LoginCommand;
 import entity.rule.agreement.LoginOutCommand;
 import entity.rule.agreement.RegisterCommand;
 import entity.rule.agreement.UnknownCommand;
+import entity.rule.agreement.VerifyStateCommand;
+import entity.rule.agreement.VerifyStateErrCommand;
+import entity.rule.agreement.WaitOtherPeopleCommand;
 
 /**
  * 协议工具
@@ -36,6 +43,20 @@ public class AgreeMentTools {
 			return new RegisterCommand(id);
 		}else if(id == CommandID.GeneralInformation) {//普通信息协议
 			return new GeneralInformationCommand(id);
+		}else if(id == CommandID.VerifyState) {//验证全部玩家状态协议
+			return new VerifyStateCommand(id);
+		}else if(id == CommandID.VerifyStateErr) {//验证全部玩家状态错误协议
+			return new VerifyStateErrCommand(id);
+		}else if(id == CommandID.GamePreparing){//游戏准备协议
+			return new GamePreparingCommand(id);
+		}else if(id == CommandID.GamePreparingError){//游戏准备错误协议
+			return new GamePreparingErrorCommand(id);
+		}else if(id == CommandID.GameLoading){//游戏加载协议
+			return new GameLoadingCommand(id);
+		}else if(id == CommandID.WaitOtherPeople) {//等待其他玩家协议
+			return new WaitOtherPeopleCommand(id);
+		}else if(id == CommandID.GameStart){//游戏开始协议
+			return new GameStartCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -62,6 +83,20 @@ public class AgreeMentTools {
 			return CommandID.Register;
 		}else if(iCommand.getClass().equals(UnknownCommand.class)){//普通信息协议
 			return CommandID.GeneralInformation;
+		}else if(iCommand.getClass().equals(GamePreparingCommand.class)) {//游戏准备协议
+			return CommandID.GamePreparing;
+		}else if(iCommand.getClass().equals(GamePreparingErrorCommand.class)) {//游戏准备错误协议
+			return CommandID.GamePreparingError;
+		}else if(iCommand.getClass().equals(VerifyStateCommand.class)) {//验证全部玩家状态协议
+			return CommandID.VerifyState;
+		}else if(iCommand.getClass().equals(VerifyStateErrCommand.class)) {//验证全部玩家状态错误协议
+			return CommandID.VerifyStateErr;
+		}else if(iCommand.getClass().equals(GameLoadingCommand.class)){//游戏加载协议
+			return CommandID.GameLoading;
+		}else if(iCommand.getClass().equals(WaitOtherPeopleCommand.class)){//等待其他玩家协议
+			return CommandID.WaitOtherPeople;
+		}else if(iCommand.getClass().equals(GameStartCommand.class)){//游戏开始协议
+			return CommandID.GameStart;
 		}else {
 			//返回错误协议数据
 			return 0;

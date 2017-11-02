@@ -50,14 +50,14 @@ public class ClientTools{
 	public Thread sendMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		if(sendThread==null) {
 			sendThread = new Thread(new Send(iCommand,str,jtp),clientName+"s");
-			receiveThread.setUncaughtExceptionHandler(new ThreadException());
+			sendThread.setUncaughtExceptionHandler(new ThreadException());
 		}
 		sendThread.start();
 		return sendThread;
 	}
 	
 	//发送数据
-	public void sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
+	public synchronized void  sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		try {
 			jtp.addString("["+clientName+"s"+"]:"+str);
 			OutputStream os = s.getOutputStream();
@@ -90,7 +90,12 @@ public class ClientTools{
 					String headInfo = info.getHeadInfo();
 					String dataInfo = info.getDataInfo();
 					System.out.println("headInfo="+headInfo+",dataInfo="+dataInfo);
-					if (icommand.header.id == CommandID.Login) {//登录协议
+					if(icommand.header.id == CommandID.Connect) {//连接协议
+						if("连接成功".equals(headInfo)) {
+							System.out.println("----");
+							GameJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
+						}
+					}else if (icommand.header.id == CommandID.Login) {//登录协议
 						if("登录成功".equals(headInfo)) {
 							GameJPanel.callBack(ClientConfig.loginInSuccess);
 						}else if("登录失败".equals(headInfo)) {
@@ -113,6 +118,16 @@ public class ClientTools{
 						GameJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
 					}else if(icommand.header.id == CommandID.GeneralInformation) {//普通信息协议
 						GameJPanel.callBack(ClientConfig.common,dataInfo);
+					}else if(icommand.header.id == CommandID.GamePreparingError) {//游戏准备错误协议
+						GameJPanel.callBack(ClientConfig.gamePreparingError,dataInfo);
+					}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
+						GameJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
+					}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
+						GameJPanel.callBack(ClientConfig.verifyState,dataInfo);
+					}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
+						GameJPanel.callBack(ClientConfig.waitOtherPeople,headInfo);
+					}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
+						GameJPanel.callBack(ClientConfig.gameStart,headInfo);
 					}
 					
 				} catch (IOException e) {

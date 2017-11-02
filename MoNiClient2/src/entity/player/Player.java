@@ -6,6 +6,8 @@ import java.util.Map;
  * 玩家类
  */
 public class Player {
+	//玩家的ip+:+port
+	public String clientId;
 	//玩家序号
 	public int playerNo;
 	//玩家名字
@@ -23,15 +25,26 @@ public class Player {
 		
 	}
 	
-	public Player(String playerName ,String password) {
+	public Player(String playerName ,String password,String clientId) {
 		this.playerName = playerName;
 		this.password = password;
+		this.clientId = this.clientId;
 	}
 	
-	public Player(String playerName,String password,int loginState) {
+	public Player(String playerName,String password,int loginState,String clientId) {
 		this.playerName = playerName;
 		this.password = password;
 		this.loginState =loginState;
+		this.clientId = clientId;
+	}
+	
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 	
 	public int getLoginState() {

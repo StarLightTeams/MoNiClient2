@@ -13,9 +13,13 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.channels.AcceptPendingException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.LoggingMXBean;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,13 +34,17 @@ import javax.swing.text.DefaultCaret;
 
 import clienttool.ClientTools;
 import config.ClientConfig;
+import entity.info.Info;
 import entity.player.Player;
 import entity.rule.agreement.ConnectCommand;
+import entity.rule.agreement.GameLoadingCommand;
 import entity.rule.agreement.GuestLoginCommand;
 import entity.rule.agreement.LoginCommand;
 import entity.rule.agreement.LoginOutCommand;
 import entity.rule.agreement.RegisterCommand;
+import entity.rule.agreement.GamePreparingCommand;
 import entity.rule.agreement.UnknownCommand;
+import tool.CommonTools;
 import tool.FileTools;
 import tool.JsonTools;
 
@@ -72,18 +80,27 @@ public class GameJPanel extends JPanel{
 	static JButton weCharLoginBtn;
 	static JLabel loginInfo;
 	
+	//开始游戏
+	static JButton gameStartBtn; //登录结束后玩家开始游戏
+	JComboBox gameType;
+	static String roomId;//进入游戏的房间号
+	
 	//连接标志
 	boolean conFlag = false;
 	//登录标志
 	static boolean loginFlag = false;
 	Socket socket = null;
 	
-	ClientTools clientTools = null;
+	static ClientTools clientTools = null;
 	String nameFlag = "2";
 	String clientName;
 	Thread sendThread = null;
 	
 	static FileTools fileTools;
+	
+	//客户端的ip和port
+	static String cIp;
+	static String cPort;
 	
 	public GameJPanel() {
 		//加载界面(初始化服务器ip和端口)
@@ -120,11 +137,8 @@ public class GameJPanel extends JPanel{
 						clientTools.receiveMessage(jtp);
 						//如果本地没有游客用户则发送游客名给服务器
 						GuestName = fileTools.readFile();
-						int k=0;
 						if("".equals(GuestName)) {
-							System.out.println("k="+k);
 							clientTools.sendOnceMessage(new GuestLoginCommand(),"", jtp);
-							k++;
 						}else {
 							userId.setText(GuestName);
 						}
@@ -194,7 +208,7 @@ public class GameJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.login;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -219,7 +233,7 @@ public class GameJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.QQ;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -244,7 +258,7 @@ public class GameJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.weChat;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -269,7 +283,7 @@ public class GameJPanel extends JPanel{
 						if(!userName.equals("")) {
 							loginType = ClientConfig.Guest;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,"1",loginType)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,"1",loginType,cIp+":"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -292,7 +306,7 @@ public class GameJPanel extends JPanel{
 					String password = userPassword.getText().trim();
 					if(!userName.equals("")&&!password.equals("")) {
 						//发送注册信息给服务器(比如玩家的一些信息Player)
-						clientTools.sendOnceMessage(new RegisterCommand() ,JsonTools.getString(new Player(userName,password)), jtp);
+						clientTools.sendOnceMessage(new RegisterCommand() ,JsonTools.getString(new Player(userName,password,cIp+":"+cPort)), jtp);
 					}else{
 						jtp.addErrString("用户名或密码不能为空");
 					}
@@ -301,6 +315,22 @@ public class GameJPanel extends JPanel{
 				}
 			}
 		});
+		
+		//开始游戏
+		gameStartBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jtp.addString("正在匹配房间",Color.GREEN);
+				String gType = (String) gameType.getSelectedItem();
+				Map<String,String> map = new HashMap();
+				map.put("gameType", CommonTools.selectGameType(gType));
+				map.put("clientId", cIp+":"+cPort);
+				//房卡(待完善)
+				map.put("roomKey", 1+"");
+				String data = JsonTools.getData(map);
+				clientTools.sendOnceMessage(new GamePreparingCommand(),JsonTools.getString(new Info("开始游戏",data)), jtp);
+			}
+		});
+		
 	}
 	
 	//接受回调函数
@@ -322,6 +352,7 @@ public class GameJPanel extends JPanel{
 				break;
 			}
 			loginFlag = true;
+			gameStartBtn.setEnabled(true);
 		}else if (type==ClientConfig.loginInError){
 			loginInfo.setText("登录失败");
 		}else if(type == ClientConfig.loginOutSuccess) {
@@ -349,7 +380,12 @@ public class GameJPanel extends JPanel{
 	}
 	//接受回调函数
 	public static void callBack(int type,String data) {
-		if(type == ClientConfig.guestNameSuccess) {
+		if(type == ClientConfig.connectSuccess) {
+			Map<String,String> maps = JsonTools.parseData(data);
+			cIp = maps.get("cIp");
+			cPort = maps.get("cPort");
+			System.out.println("cIp="+cIp+",cPort="+cPort);
+		}else if(type == ClientConfig.guestNameSuccess) {
 			//赋值保存到客户端本地
 			fileTools.writeFile(data);
 			userId.setText(data);
@@ -358,7 +394,30 @@ public class GameJPanel extends JPanel{
 			jtp.addErrString(data);
 		}else if(type == ClientConfig.common) {
 			jtp.addString(data,Color.YELLOW);
+		}else if(type == ClientConfig.gamePreparingError) {
+			jtp.addErrString(data);
+		}else if(type == ClientConfig.verifyStateErr) {
+			Map<String, String> maps = JsonTools.parseData(data);
+			Iterator entries = maps.entrySet().iterator();
+			while(entries.hasNext()) {
+				Map.Entry entry = (Map.Entry) entries.next();
+				jtp.addErrString("客户端:"+entry.getKey()+",验证错误:"+entry.getValue());
+			}
+		}else if(type == ClientConfig.verifyState) {
+			Map<String, String> maps = JsonTools.parseData(data);
+			roomId = maps.get("roomId"); 
+			String roomType = maps.get("roomType");
+			System.out.println("roomId="+roomId+",roomType="+roomType);
+			//加载游戏(待完善)
+			jtp.addString("开始游戏");
+			//发送加载完成
+			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
+		}else if(type == ClientConfig.waitOtherPeople) {
+			jtp.addString(data, Color.GREEN);
+		}else if(type == ClientConfig.gameStart){
+			jtp.addString(data,Color.green);
 		}
+				
 	}
 	
 	/**
@@ -470,6 +529,16 @@ public class GameJPanel extends JPanel{
 		filtHeartBtn = new JButton("过滤心跳");
 		this.add(filtHeartBtn);
 		filtHeartBtn.setBounds(440,130,90,30);
+		
+		gameStartBtn = new JButton("开始游戏");
+		this.add(gameStartBtn);
+		gameStartBtn.setBounds(440, 170, 90, 30);
+		gameStartBtn.setEnabled(false);
+		
+		String[] types = {"双人普通游戏","双人特殊游戏","四人普通游戏","四人特殊游戏"};	
+		gameType = new JComboBox(types);
+		this.add(gameType);
+		gameType.setBounds(540, 170, 90, 30);
 
 		text = new JTextField(25);
 		this.add(text);
