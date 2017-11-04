@@ -5,7 +5,7 @@ import java.awt.FlowLayout;
 import javax.swing.JFrame;
 
 import config.ClientConfig;
-import entity.GameJPanel;
+import entity.GameConJPanel;
 
 public class MainController {
 	
@@ -15,7 +15,7 @@ public class MainController {
 		frame.setBounds(clientConfig.STARTX,clientConfig.STARTY, clientConfig.WIDTH,clientConfig.HEIGHT );
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		GameJPanel panel = new GameJPanel();
+		GameConJPanel panel = new GameConJPanel();
 		
 		frame.add(panel);
 		frame.setResizable(false);

@@ -10,7 +10,7 @@ import java.util.Random;
 import javax.swing.JTextPane;
 
 import config.ClientConfig;
-import entity.GameJPanel;
+import entity.GameConJPanel;
 import entity.JTextPaneUP;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
@@ -92,42 +92,41 @@ public class ClientTools{
 					System.out.println("headInfo="+headInfo+",dataInfo="+dataInfo);
 					if(icommand.header.id == CommandID.Connect) {//连接协议
 						if("连接成功".equals(headInfo)) {
-							System.out.println("----");
-							GameJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
+							GameConJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
 						}
 					}else if (icommand.header.id == CommandID.Login) {//登录协议
 						if("登录成功".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.loginInSuccess);
+							GameConJPanel.callBack(ClientConfig.loginInSuccess);
 						}else if("登录失败".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.loginInError);
+							GameConJPanel.callBack(ClientConfig.loginInError);
 						}
 					}else if(icommand.header.id == CommandID.LoginOut) { //退出登录协议
 						if("退出成功".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.loginOutSuccess);
+							GameConJPanel.callBack(ClientConfig.loginOutSuccess);
 						}else if("退出失败".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.loginOutError);
+							GameConJPanel.callBack(ClientConfig.loginOutError);
 						}
 					}else if(icommand.header.id == CommandID.Register) {//注册协议
 						if("注册成功".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.registerSuccess);
+							GameConJPanel.callBack(ClientConfig.registerSuccess);
 						}else if("注册失败".equals(headInfo)) {
-							GameJPanel.callBack(ClientConfig.registerError, dataInfo);
+							GameConJPanel.callBack(ClientConfig.registerError, dataInfo);
 						}
 					}else if(icommand.header.id == CommandID.GuestLogin) {//游客登录协议
 						//拿到服务器给的游客名字,存放到本地,下次客户端先从本地拿取游客名字
-						GameJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
+						GameConJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
 					}else if(icommand.header.id == CommandID.GeneralInformation) {//普通信息协议
-						GameJPanel.callBack(ClientConfig.common,dataInfo);
+						GameConJPanel.callBack(ClientConfig.common,dataInfo);
 					}else if(icommand.header.id == CommandID.GamePreparingError) {//游戏准备错误协议
-						GameJPanel.callBack(ClientConfig.gamePreparingError,dataInfo);
+						GameConJPanel.callBack(ClientConfig.gamePreparingError,dataInfo);
 					}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
-						GameJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
+						GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
 					}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
-						GameJPanel.callBack(ClientConfig.verifyState,dataInfo);
+						GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
 					}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
-						GameJPanel.callBack(ClientConfig.waitOtherPeople,headInfo);
+						GameConJPanel.callBack(ClientConfig.waitOtherPeople,headInfo);
 					}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
-						GameJPanel.callBack(ClientConfig.gameStart,headInfo);
+						GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
 					}
 					
 				} catch (IOException e) {
