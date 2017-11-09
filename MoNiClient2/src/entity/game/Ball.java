@@ -1,0 +1,64 @@
+package entity.game;
+
+/**
+ * 球
+ */
+public class Ball {
+	public int d;//半径
+	public double ySpeed;//球的y轴速度
+	public double xSpeed;//球的x轴速度
+	public double xA;//球的x轴加速度
+	public double yA;//球的y轴加速的
+	public double degree;//球的角度
+	
+	public Ball() {
+	}
+	
+	public Ball(int d, double ySpeed, double xSpeed, double xA, double yA, double degree) {
+		this.d = d;
+		this.ySpeed = ySpeed;
+		this.xSpeed = xSpeed;
+		this.xA = xA;
+		this.yA = yA;
+		this.degree = degree;
+	}
+	public int getD() {
+		return d;
+	}
+	public void setD(int d) {
+		this.d = d;
+	}
+	public double getySpeed() {
+		return ySpeed;
+	}
+	public void setySpeed(double ySpeed) {
+		this.ySpeed = ySpeed;
+	}
+	public double getxSpeed() {
+		return xSpeed;
+	}
+	public void setxSpeed(double xSpeed) {
+		this.xSpeed = xSpeed;
+	}
+	public double getxA() {
+		return xA;
+	}
+	public void setxA(double xA) {
+		this.xA = xA;
+	}
+	public double getyA() {
+		return yA;
+	}
+	public void setyA(double yA) {
+		this.yA = yA;
+	}
+	public double getDegree() {
+		return degree;
+	}
+	public void setDegree(double degree) {
+		this.degree = degree;
+	}
+	
+	
+	
+}

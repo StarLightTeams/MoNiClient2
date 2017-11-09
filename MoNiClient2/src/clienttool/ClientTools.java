@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.swing.JTextPane;
@@ -124,7 +126,10 @@ public class ClientTools{
 					}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
 						GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
 					}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
-						GameConJPanel.callBack(ClientConfig.waitOtherPeople,headInfo);
+						Map<String,String> maps = new HashMap<String,String>();
+						maps.put("headInfo", headInfo);
+						maps.put("dataInfo",dataInfo);
+						GameConJPanel.callBack(ClientConfig.waitOtherPeople,JsonTools.getData(maps));
 					}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
 						GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
 					}

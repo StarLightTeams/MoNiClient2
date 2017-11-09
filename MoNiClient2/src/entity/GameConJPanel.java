@@ -37,6 +37,7 @@ import clienttool.ClientTools;
 import config.ClientConfig;
 import entity.info.Info;
 import entity.player.Player;
+import entity.rooms.Room;
 import entity.rule.agreement.ConnectCommand;
 import entity.rule.agreement.GameLoadingCommand;
 import entity.rule.agreement.GuestLoginCommand;
@@ -100,6 +101,8 @@ public class GameConJPanel extends JPanel{
 	
 	static FileTools fileTools;
 	
+	//加入的游戏房间
+	static Room room;
 	//游戏画面
 	GameJPanel gameJPanel;
 	
@@ -425,7 +428,12 @@ public class GameConJPanel extends JPanel{
 			//发送加载完成
 			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
 		}else if(type == ClientConfig.waitOtherPeople) {
-			jtp.addString(data, Color.GREEN);
+			Map<String,String> maps = JsonTools.parseData(data);
+			String headInfo = maps.get("headInfo");
+			String dataInfo = maps.get("dataInfo");
+			room = (Room) JsonTools.parseJson(dataInfo);
+			room.toString();
+			jtp.addString(headInfo, Color.GREEN);
 		}else if(type == ClientConfig.gameStart){
 			jtp.addString(data,Color.green);
 		}

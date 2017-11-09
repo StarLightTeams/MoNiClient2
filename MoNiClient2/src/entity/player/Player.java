@@ -1,11 +1,13 @@
 package entity.player;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /*
  * 玩家类
  */
-public class Player {
+public class Player{
 	//玩家的ip+:+port
 	public String clientId;
 	//玩家序号
@@ -17,7 +19,7 @@ public class Player {
 	//玩家房卡
 	public int playerCard;
 	//玩家道具
-	public Map<String,Integer> djmap;
+	public Map<String,Integer> djmap = new HashMap<String, Integer>();
 	//玩家登录状态【0.未登录 1.游客登录 2.qq登录 3.微信登录】
 	public int loginState = 0;
 	
