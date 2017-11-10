@@ -140,7 +140,9 @@ public class GameConJPanel extends JPanel{
 						conBtn.setText("断开");
 						clientName = socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+":"+nameFlag; 
 						clientTools = new ClientTools(socket,clientName);
-						fileTools = new FileTools("D://GuestName.txt");
+						String path = this.getClass().getClassLoader().getResource("").getPath(); // 得到的是 ClassPath的绝对URI路径
+						System.out.println(path);
+						fileTools = new FileTools(path+"/GuestName.txt");
 						//接受信息
 						clientTools.receiveMessage(jtp);
 						//如果本地没有游客用户则发送游客名给服务器
