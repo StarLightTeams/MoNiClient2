@@ -59,7 +59,7 @@ public class DataBuffer {
 	}
 
 	public char[] ReadChars() {
-		int len = ReadChar() & 0xFF;
+		int len = ReadChar() & 0xFFFFFF;
 		charsLength = len; // added for continue play command, _CardCount =
 							// readchars();
 		return ReadRawBytes(len);
@@ -94,7 +94,7 @@ public class DataBuffer {
 	}
 
 	public String ReadString2() {
-		int len = ReadShort() & 0xFFFF;
+		int len = ReadShort() & 0xFFFFFF;
 		char[] a = ReadRawBytes(len);
 		if (a == null)
 			return new String("");

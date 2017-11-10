@@ -35,6 +35,7 @@ import javax.swing.text.DefaultCaret;
 
 import clienttool.ClientTools;
 import config.ClientConfig;
+import config.entity.Log;
 import entity.info.Info;
 import entity.player.Player;
 import entity.rooms.Room;
@@ -430,11 +431,11 @@ public class GameConJPanel extends JPanel{
 			//发送加载完成
 			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
 		}else if(type == ClientConfig.waitOtherPeople) {
-			Map<String,String> maps = JsonTools.parseData(data);
+			Map<String,String> maps = JsonTools.pasreObjectData(data);
 			String headInfo = maps.get("headInfo");
 			String dataInfo = maps.get("dataInfo");
 			room = (Room) JsonTools.parseJson(dataInfo);
-			room.toString();
+			Log.d(room.toString());
 			jtp.addString(headInfo, Color.GREEN);
 		}else if(type == ClientConfig.gameStart){
 			jtp.addString(data,Color.green);
