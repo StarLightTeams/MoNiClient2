@@ -50,6 +50,7 @@ import entity.rule.agreement.UnknownCommand;
 import tool.CommonTools;
 import tool.FileTools;
 import tool.JsonTools;
+import tool.ThreadTools;
 
 public class GameConJPanel extends JPanel{
 	
@@ -97,7 +98,8 @@ public class GameConJPanel extends JPanel{
 	
 	static ClientTools clientTools = null;
 	String nameFlag = "2";
-	String clientName;
+	String serverName; //服务器id ip+':'+port+':'+nameFlag
+	static String clientName; //客户端id ip+':'+port
 	Thread sendThread = null;
 	
 	static FileTools fileTools;
@@ -126,21 +128,17 @@ public class GameConJPanel extends JPanel{
 		conBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(conFlag) {
-					//不完整 ,有待完善关闭客户端
-					try {
-						socket.close();
-						conBtn.setText("连接");
-						conLab.setText("");
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					clientTools.closeClient(jtp,clientName);
+					conBtn.setText("连接");
+					conLab.setText("");
+					conFlag = false;
 				}else {
 					if(serviceConnect(ip,port)){
 						conLab.setText("连接成功");
 						conFlag = true;
 						conBtn.setText("断开");
-						clientName = socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+":"+nameFlag; 
-						clientTools = new ClientTools(socket,clientName);
+						serverName = socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+":"+nameFlag;
+						clientTools = new ClientTools(socket,serverName,clientName);
 						String path = this.getClass().getClassLoader().getResource("").getPath(); // 得到的是 ClassPath的绝对URI路径
 						System.out.println(path);
 						fileTools = new FileTools(path+"/GuestName.txt");
@@ -202,6 +200,7 @@ public class GameConJPanel extends JPanel{
 		stopBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(conFlag) {
+//					ThreadTools.remove(serverName);
 					clientTools.sendThread = null;
 					sendThread.stop();
 				}else {
@@ -398,6 +397,7 @@ public class GameConJPanel extends JPanel{
 			Map<String,String> maps = JsonTools.parseData(data);
 			cIp = maps.get("cIp");
 			cPort = maps.get("cPort");
+			clientName = cIp+":"+cPort;
 			System.out.println("cIp="+cIp+",cPort="+cPort);
 		}else if(type == ClientConfig.guestNameSuccess) {
 			//赋值保存到客户端本地
@@ -458,6 +458,7 @@ public class GameConJPanel extends JPanel{
 			jtp.addErrString("连接失败:"+e.getMessage());
 			return false;
 		}
+		System.out.println("00000000");
 		return true;
 	}
 	

@@ -4,6 +4,7 @@ package tool.agreement;
 import entity.agrement.CommandID;
 import entity.agrement.ICommand;
 import entity.rule.agreement.ConnectCommand;
+import entity.rule.agreement.DisconnectCommand;
 import entity.rule.agreement.GameLoadingCommand;
 import entity.rule.agreement.GamePreparingCommand;
 import entity.rule.agreement.GamePreparingErrorCommand;
@@ -57,6 +58,8 @@ public class AgreeMentTools {
 			return new WaitOtherPeopleCommand(id);
 		}else if(id == CommandID.GameStart){//游戏开始协议
 			return new GameStartCommand(id);
+		}else if(id == CommandID.DisConnnect){//断开连接协议
+			return new DisconnectCommand(id);
 		}else {
 			//返回错误协议数据
 			return new ICommand();
@@ -97,6 +100,8 @@ public class AgreeMentTools {
 			return CommandID.WaitOtherPeople;
 		}else if(iCommand.getClass().equals(GameStartCommand.class)){//游戏开始协议
 			return CommandID.GameStart;
+		}else if(iCommand.getClass().equals(DisconnectCommand.class)){//断开连接协议
+			return CommandID.DisConnnect;
 		}else {
 			//返回错误协议数据
 			return 0;
