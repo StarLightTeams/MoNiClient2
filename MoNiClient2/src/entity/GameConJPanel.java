@@ -67,7 +67,7 @@ public class GameConJPanel extends JPanel{
 	JButton stopBtn;
 	
 	//中间文本框
-	static JTextPaneUP jtp;
+	public static JTextPaneUP jtp;
 	JScrollPane jsp;
 	JButton delBtn;
 	JButton filtHeartBtn; 
@@ -96,10 +96,10 @@ public class GameConJPanel extends JPanel{
 	static boolean loginFlag = false;
 	Socket socket = null;
 	
-	static ClientTools clientTools = null;
+	public static ClientTools clientTools = null;
 	String nameFlag = "2";
 	String serverName; //服务器id ip+':'+port+':'+nameFlag
-	static String clientName; //客户端id ip+':'+port
+	public static String clientName; //客户端id ip+':'+port
 	Thread sendThread = null;
 	
 	static FileTools fileTools;

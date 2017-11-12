@@ -1,9 +1,12 @@
 package maincontroller;
 
 import java.awt.FlowLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import clienttool.ClientTools;
 import config.ClientConfig;
 import entity.GameConJPanel;
 
@@ -13,11 +16,17 @@ public class MainController {
 		JFrame frame = new JFrame("¿Í»§¶Ë");
 		ClientConfig clientConfig = new ClientConfig();
 		frame.setBounds(clientConfig.STARTX,clientConfig.STARTY, clientConfig.WIDTH,clientConfig.HEIGHT );
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		GameConJPanel panel = new GameConJPanel();
+		final GameConJPanel panel = new GameConJPanel();
 		
 		frame.add(panel);
+		frame.addWindowListener(new WindowAdapter() {  
+			public void windowClosing(WindowEvent e) {  
+				super.windowClosing(e);  
+				panel.clientTools.closeClient(panel.jtp,panel.clientName);
+			}  
+		}); 
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}
