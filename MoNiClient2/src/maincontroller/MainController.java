@@ -16,17 +16,19 @@ public class MainController {
 		JFrame frame = new JFrame("¿Í»§¶Ë");
 		ClientConfig clientConfig = new ClientConfig();
 		frame.setBounds(clientConfig.STARTX,clientConfig.STARTY, clientConfig.WIDTH,clientConfig.HEIGHT );
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		final GameConJPanel panel = new GameConJPanel();
 		
 		frame.add(panel);
 		frame.addWindowListener(new WindowAdapter() {  
 			public void windowClosing(WindowEvent e) {  
-				super.windowClosing(e);  
-				panel.clientTools.closeClient(panel.jtp,panel.clientName);
+				super.windowClosing(e); 
+				if(panel.conFlag) {
+					panel.clientTools.closeClient(panel.jtp,panel.clientName);
+				}
 			}  
 		}); 
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}

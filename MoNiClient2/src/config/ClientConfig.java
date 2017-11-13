@@ -10,6 +10,17 @@ public class ClientConfig {
 	public static final int WIDTH = 1300;
 	//屏幕高度
 	public static final int HEIGHT = 1000;	
+	
+	//游戏屏幕宽度
+	public static final int GAMEWIDTH = 640/2;
+	//游戏屏幕高度
+	public static final int GAMEHEIGHT = 1136/2;
+	
+	//游戏实际屏幕宽度
+	public static final int GAMEREALYWIDTH = 640;
+	//游戏实际屏幕高度
+	public static final int GAMEREALYHEIGHT = 1136;
+
 	//屏幕初始出现位置
 	public static final int STARTX = 10;
 	public static final int STARTY = 10;

@@ -91,7 +91,7 @@ public class GameConJPanel extends JPanel{
 	static String roomId;//进入游戏的房间号
 	
 	//连接标志
-	boolean conFlag = false;
+	public boolean conFlag = false;
 	//登录标志
 	static boolean loginFlag = false;
 	Socket socket = null;
@@ -564,9 +564,9 @@ public class GameConJPanel extends JPanel{
 		this.add(gameType);
 		gameType.setBounds(540, 170, 90, 30);
 		
-		gameJPanel = new GameJPanel();
+		gameJPanel = new GameJPanel(jtp);
 		this.add(gameJPanel);
-		gameJPanel.setBounds(640, 90,640/2, 1136/2);
+		gameJPanel.setBounds(640, 90,ClientConfig.GAMEWIDTH, ClientConfig.GAMEHEIGHT);
 		gameJPanel.setBackground(Color.WHITE);
 		gameJPanel.setBorder(BorderFactory.createEtchedBorder());
 
