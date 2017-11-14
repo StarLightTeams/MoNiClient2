@@ -180,8 +180,8 @@ public class JsonTools {
 	}
 	
 	public static Object parseJson(String str) {
-		  
-		JSONObject jObject = JSONObject.fromObject(str);
+		 System.out.println("parseJsonStr="+str);
+		JSONObject jObject = JSONObject.fromObject(str.trim());
 		String className = jObject.getString("className");
 		String superName = jObject.getString("superName");
 		if("Player".equals(className)) {

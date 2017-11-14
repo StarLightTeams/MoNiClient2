@@ -6,6 +6,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
+import org.junit.runners.model.FrameworkMethod;
+
 import clienttool.ClientTools;
 import config.ClientConfig;
 import entity.GameConJPanel;
@@ -13,7 +15,7 @@ import entity.GameConJPanel;
 public class MainController {
 	
 	public MainController() {
-		JFrame frame = new JFrame("客户端");
+		final JFrame frame = new JFrame("客户端");
 		ClientConfig clientConfig = new ClientConfig();
 		frame.setBounds(clientConfig.STARTX,clientConfig.STARTY, clientConfig.WIDTH,clientConfig.HEIGHT );
 		
@@ -25,10 +27,11 @@ public class MainController {
 				super.windowClosing(e); 
 				if(panel.conFlag) {
 					panel.clientTools.closeClient(panel.jtp,panel.clientName);
+				}else {
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				}
 			}  
 		}); 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setVisible(true);
 	}

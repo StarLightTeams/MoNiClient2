@@ -147,7 +147,7 @@ public class GameConJPanel extends JPanel{
 						//如果本地没有游客用户则发送游客名给服务器
 						String data= fileTools.readFile();
 						if("".equals(data)) {	//为空
-							clientTools.sendOnceMessage(new GuestLoginCommand(),JsonTools.getString(new Info("")), jtp);
+							clientTools.sendOnceMessage(new GuestLoginCommand(),JsonTools.getString(new Info(" ")), jtp);
 						}else {
 							Map<String,String> maps = JsonTools.parseData(data);
 							GuestName = maps.get("playerName");
@@ -200,7 +200,6 @@ public class GameConJPanel extends JPanel{
 		stopBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(conFlag) {
-//					ThreadTools.remove(serverName);
 					clientTools.sendThread = null;
 					sendThread.stop();
 				}else {
@@ -458,7 +457,6 @@ public class GameConJPanel extends JPanel{
 			jtp.addErrString("连接失败:"+e.getMessage());
 			return false;
 		}
-		System.out.println("00000000");
 		return true;
 	}
 	

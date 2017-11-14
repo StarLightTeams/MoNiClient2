@@ -76,12 +76,16 @@ public class ClientTools{
 	}
 	
 	//发送数据
-	public synchronized void  sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
-		if(sendThread1==null) {
-			sendThread1 = new Thread(new Send1(iCommand,str,jtp),serverName+"s");
-			sendThread1.setUncaughtExceptionHandler(new ThreadException());
+	public  void  sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
+		try {
+			jtp.addString("["+clientName+"s"+"]:"+str);
+			OutputStream os = s.getOutputStream();
+			DataBuffer data = createAgreeMentMessage(iCommand, str);
+			os.write(data.readByte());
+			os.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		sendThread1.start();
 	}
 	
 	//接受数据
@@ -116,6 +120,7 @@ public class ClientTools{
 								GameConJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
 							}
 						}else if (icommand.header.id == CommandID.Login) {//登录协议
+							System.out.println("hhhhhhhhhheadInfo="+headInfo);
 							if("登录成功".equals(headInfo)) {
 								GameConJPanel.callBack(ClientConfig.loginInSuccess);
 							}else if("登录失败".equals(headInfo)) {
@@ -143,7 +148,8 @@ public class ClientTools{
 						}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
 							GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
 						}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
-							GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
+							System.out.println("dataInfo-------="+dataInfo);
+//							GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
 						}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
 							Map<String,String> maps = new HashMap<String,String>();
 							maps.put("headInfo", headInfo);
@@ -163,33 +169,6 @@ public class ClientTools{
 		
 	}
 	
-	class Send1 implements Runnable {
-		String str;
-		JTextPaneUP jtp;
-		ICommand iCommand;
-		public Send1(ICommand iCommand,String str,JTextPaneUP jtp) {
-			this.str = str;
-			this.jtp = jtp;
-			this.iCommand = iCommand;
-		}
-		
-		public synchronized void run() {
-			try {
-				jtp.addString("["+serverName+"s"+"]:"+str);
-				OutputStream os = s.getOutputStream();
-				DataBuffer data = createAgreeMentMessage(iCommand, str);
-				os.write(data.readByte());
-				os.flush();
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	class Send implements Runnable {
 		String str;
