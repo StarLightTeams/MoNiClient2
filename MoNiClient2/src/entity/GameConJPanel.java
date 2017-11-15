@@ -114,6 +114,8 @@ public class GameConJPanel extends JPanel{
 	static String cIp;
 	static String cPort;
 	
+	static Thread gameThread = null;
+	
 	public GameConJPanel() {
 		//加载界面(初始化服务器ip和端口)
 		loadUI();
@@ -432,6 +434,8 @@ public class GameConJPanel extends JPanel{
 			Log.d(game.toString());
 			//加载游戏
 			gameJPanel.loadUI(game);
+			gameThread = new Thread(gameJPanel,"game");
+			gameThread.start();
 			gameJPanel.updateUI();
 			jtp.addString("开始游戏",Color.green);
 			//发送加载完成
