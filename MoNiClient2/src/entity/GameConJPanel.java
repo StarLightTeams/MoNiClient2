@@ -432,6 +432,7 @@ public class GameConJPanel extends JPanel{
 			Log.d(game.toString());
 			//加载游戏
 			gameJPanel.loadUI(game);
+			gameJPanel.updateUI();
 			jtp.addString("开始游戏",Color.green);
 			//发送加载完成
 			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
