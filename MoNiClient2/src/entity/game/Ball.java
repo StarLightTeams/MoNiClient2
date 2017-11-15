@@ -17,7 +17,7 @@ public class Ball {
 	public double degree;//ÇòµÄ½Ç¶È
 	
 	public void draw(Graphics g) {
-		g.drawOval((int)(bx-d), (int)(by-d), d*2, d*2);
+		g.drawOval((int)(bx-d/2), (int)(by-d/2), d, d);
 	}
 	
 	public Ball() {
