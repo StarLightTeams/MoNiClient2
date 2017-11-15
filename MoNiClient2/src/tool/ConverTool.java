@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import config.ClientConfig;
+import config.entity.Log;
 import entity.game.Ball;
 import entity.game.Board;
 import entity.game.Brick;
@@ -182,8 +183,8 @@ public class ConverTool {
 	}
 	public static BfbBoard conver_board(Board board){
 		BfbBoard bfbvoard =new BfbBoard();
-		bfbvoard.bf_width = YueFenTool.yueFen(board.width/ClientConfig.GAMEREALYWIDTH); //宽
-		bfbvoard.bf_height = YueFenTool.yueFen(board.height/ClientConfig.GAMEREALYHEIGHT);//高
+		bfbvoard.bf_width = YueFenTool.yueFen(board.width*1.00/ClientConfig.GAMEREALYWIDTH); //宽
+		bfbvoard.bf_height = YueFenTool.yueFen(board.height*1.00/ClientConfig.GAMEREALYHEIGHT);//高
 		bfbvoard.bf_locX = YueFenTool.yueFen(board.locX/ClientConfig.GAMEREALYWIDTH);  //位置x
 		bfbvoard.bf_locY = YueFenTool.yueFen(board.locY/ClientConfig.GAMEREALYHEIGHT);  //位置y
 		bfbvoard.ySpeed = board.ySpeed;//移动速度
