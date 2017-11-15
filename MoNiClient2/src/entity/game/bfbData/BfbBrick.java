@@ -1,5 +1,7 @@
 package entity.game.bfbData;
 
+import java.awt.Graphics;
+
 /**
  * 百分比砖
  */
@@ -11,6 +13,10 @@ public class BfbBrick {
 	public double bg_locY;//y
 	public String bPropsId;//砖块道具id
 	public int hardness;//硬度
+	
+	public void draw(Graphics g) {
+		g.drawRect((int)bg_locX,(int)bg_locY, (int)bg_width, (int)bg_height);
+	}
 	
 	public BfbBrick() {
 		super();

@@ -1,5 +1,7 @@
 package entity.game.bfbData;
 
+import java.awt.Graphics;
+
 /**
  * 百分比板
  */
@@ -11,6 +13,10 @@ public class BfbBoard {
 	public double bf_locY;  //位置y
 	public double ySpeed;//移动速度
 	public double yA;	  //移动加速度
+	
+	public void draw(Graphics g) {
+		g.drawRect((int)(bf_locX), (int)(bf_locY-bf_width/2), (int)(bf_width), (int)(bf_height));
+	}
 	
 	public BfbBoard() {
 		super();

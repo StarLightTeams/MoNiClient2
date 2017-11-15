@@ -1,5 +1,7 @@
 package entity.game.bfbData;
 
+import java.awt.Graphics;
+
 /** 
  *百分比球
  */
@@ -13,6 +15,10 @@ public class BfbBall {
 	public double xA;//球的x轴加速度
 	public double yA;//球的y轴加速的
 	public double degree;//球的角度
+	
+	public void draw(Graphics g) {
+		g.drawOval((int)bf_bx, (int)bf_by, (int)bf_d, (int)bf_d);
+	}
 	
 	public BfbBall() {
 		super();

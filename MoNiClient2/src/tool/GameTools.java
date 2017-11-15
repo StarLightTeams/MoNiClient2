@@ -18,6 +18,7 @@ import config.ClientConfig;
 import config.GameConfig;
 import entity.JTextPaneUP;
 import entity.game.Brick;
+import entity.game.Game;
 
 public class GameTools {
 	

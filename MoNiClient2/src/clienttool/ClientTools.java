@@ -78,7 +78,7 @@ public class ClientTools{
 	//发送数据
 	public  void  sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		try {
-			jtp.addString("["+clientName+"s"+"]:"+str);
+			jtp.addString("["+serverName+"s"+"]:"+str);
 			OutputStream os = s.getOutputStream();
 			DataBuffer data = createAgreeMentMessage(iCommand, str);
 			os.write(data.readByte());
@@ -99,9 +99,10 @@ public class ClientTools{
 		public synchronized void run() {
 			while(isLive) {
 				try {
-					byte[] b = new byte[45056];
+					byte[] b = new byte[45056*2];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
+					System.out.println("len="+len);
 					if(len == -1) { //证明在服务器中已经把客户端关闭
 						//关闭线程
 						isLive = false;
@@ -120,7 +121,7 @@ public class ClientTools{
 								GameConJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
 							}
 						}else if (icommand.header.id == CommandID.Login) {//登录协议
-							System.out.println("hhhhhhhhhheadInfo="+headInfo);
+//							System.out.println("hhhhhhhhhheadInfo="+headInfo);
 							if("登录成功".equals(headInfo)) {
 								GameConJPanel.callBack(ClientConfig.loginInSuccess);
 							}else if("登录失败".equals(headInfo)) {
@@ -149,7 +150,7 @@ public class ClientTools{
 							GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
 						}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
 							System.out.println("dataInfo-------="+dataInfo);
-//							GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
+							GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
 						}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
 							Map<String,String> maps = new HashMap<String,String>();
 							maps.put("headInfo", headInfo);

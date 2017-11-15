@@ -36,6 +36,7 @@ import javax.swing.text.DefaultCaret;
 import clienttool.ClientTools;
 import config.ClientConfig;
 import config.entity.Log;
+import entity.game.Game;
 import entity.info.Info;
 import entity.player.Player;
 import entity.rooms.Room;
@@ -107,7 +108,7 @@ public class GameConJPanel extends JPanel{
 	//加入的游戏房间
 	static Room room;
 	//游戏画面
-	GameJPanel gameJPanel;
+	static GameJPanel gameJPanel;
 	
 	//客户端的ip和port
 	static String cIp;
@@ -295,7 +296,7 @@ public class GameConJPanel extends JPanel{
 						if(!userName.equals("")&&GuestId!=0) {
 							loginType = ClientConfig.Guest;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(GuestId,"1",loginType,cIp+":"+cPort)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(GuestId,GuestName,"1",loginType,cIp+":"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -421,12 +422,17 @@ public class GameConJPanel extends JPanel{
 				jtp.addErrString("客户端:"+entry.getKey()+",验证错误:"+entry.getValue());
 			}
 		}else if(type == ClientConfig.verifyState) {
-			Map<String, String> maps = JsonTools.parseData(data);
+			Map<String, String> maps = JsonTools.pasreObjectData(data);
 			roomId = maps.get("roomId"); 
 			String roomType = maps.get("roomType");
+			String gameData = maps.get("Game");
+			Log.d("gameData="+gameData);
 			System.out.println("roomId="+roomId+",roomType="+roomType);
-			//加载游戏(待完善)
-			jtp.addString("开始游戏");
+			Game game = (Game) JsonTools.parseJson(gameData);
+			Log.d(game.toString());
+			//加载游戏
+			gameJPanel.loadUI(game);
+			jtp.addString("开始游戏",Color.green);
 			//发送加载完成
 			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
 		}else if(type == ClientConfig.waitOtherPeople) {

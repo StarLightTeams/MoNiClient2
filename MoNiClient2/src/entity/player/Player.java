@@ -34,6 +34,14 @@ public class Player{
 		this.clientId = clientId;
 	}
 	
+	public Player(int playerNo,String playerName,String password,int loginState,String clientId) {
+		this.playerNo = playerNo;
+		this.password = password;
+		this.loginState =loginState;
+		this.clientId = clientId;
+		this.playerName = playerName;
+	}
+	
 	public Player(String playerName ,String password,String clientId) {
 		this.playerName = playerName;
 		this.password = password;
