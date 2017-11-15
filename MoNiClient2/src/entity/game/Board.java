@@ -12,7 +12,7 @@ public class Board {
 	public int yA;	  //移动加速度
 	
 	public void draw(Graphics g) {
-		g.drawRect((int)(locX), (int)(locY-height/2), width, height);
+		g.drawRect((int)(locX-width/2), (int)(locY-height/2), (int)(width), (int)(height));
 	}
 	
 	public Board() {
