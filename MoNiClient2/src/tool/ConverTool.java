@@ -185,8 +185,8 @@ public class ConverTool {
 		BfbBoard bfbvoard =new BfbBoard();
 		bfbvoard.bf_width = YueFenTool.yueFen(board.width*1.00/ClientConfig.GAMEREALYWIDTH); //宽
 		bfbvoard.bf_height = YueFenTool.yueFen(board.height*1.00/ClientConfig.GAMEREALYHEIGHT);//高
-		bfbvoard.bf_locX = YueFenTool.yueFen(board.locX/ClientConfig.GAMEREALYWIDTH);  //位置x
-		bfbvoard.bf_locY = YueFenTool.yueFen(board.locY/ClientConfig.GAMEREALYHEIGHT);  //位置y
+		bfbvoard.bf_locX = YueFenTool.yueFen(board.locX*1.00/ClientConfig.GAMEREALYWIDTH);  //位置x
+		bfbvoard.bf_locY = YueFenTool.yueFen(board.locY*1.00/ClientConfig.GAMEREALYHEIGHT);  //位置y
 		bfbvoard.ySpeed = board.ySpeed;//移动速度
 		bfbvoard.yA = board.yA;	  //移动加速度
 		return bfbvoard;
