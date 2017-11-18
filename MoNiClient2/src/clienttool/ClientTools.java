@@ -113,51 +113,53 @@ public class ClientTools{
 						ICommand icommand = AgreeMentTools.getICommand(data);
 						jtp.addString("["+serverName+"r"+"]:"+new String(icommand.body));
 						Info info = (Info) JsonTools.parseJson(new String(icommand.body));
-						String headInfo = info.getHeadInfo();
-						String dataInfo = info.getDataInfo();
-						System.out.println("headInfo="+headInfo+",dataInfo="+dataInfo);
-						if(icommand.header.id == CommandID.Connect) {//连接协议
-							if("连接成功".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
-							}
-						}else if (icommand.header.id == CommandID.Login) {//登录协议
+						if(info!=null) {
+							String headInfo = info.getHeadInfo();
+							String dataInfo = info.getDataInfo();
+							System.out.println("headInfo="+headInfo+",dataInfo="+dataInfo);
+							if(icommand.header.id == CommandID.Connect) {//连接协议
+								if("连接成功".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.connectSuccess,dataInfo);
+								}
+							}else if (icommand.header.id == CommandID.Login) {//登录协议
 //							System.out.println("hhhhhhhhhheadInfo="+headInfo);
-							if("登录成功".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.loginInSuccess);
-							}else if("登录失败".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.loginInError);
+								if("登录成功".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.loginInSuccess);
+								}else if("登录失败".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.loginInError);
+								}
+							}else if(icommand.header.id == CommandID.LoginOut) { //退出登录协议
+								if("退出成功".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.loginOutSuccess);
+								}else if("退出失败".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.loginOutError);
+								}
+							}else if(icommand.header.id == CommandID.Register) {//注册协议
+								if("注册成功".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.registerSuccess);
+								}else if("注册失败".equals(headInfo)) {
+									GameConJPanel.callBack(ClientConfig.registerError, dataInfo);
+								}
+							}else if(icommand.header.id == CommandID.GuestLogin) {//游客登录协议
+								//拿到服务器给的游客名字,存放到本地,下次客户端先从本地拿取游客名字
+								GameConJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
+							}else if(icommand.header.id == CommandID.GeneralInformation) {//普通信息协议
+								GameConJPanel.callBack(ClientConfig.common,dataInfo);
+							}else if(icommand.header.id == CommandID.GamePreparingError) {//游戏准备错误协议
+								GameConJPanel.callBack(ClientConfig.gamePreparingError,dataInfo);
+							}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
+								GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
+							}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
+								System.out.println("dataInfo-------="+dataInfo);
+								GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
+							}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
+								Map<String,String> maps = new HashMap<String,String>();
+								maps.put("headInfo", headInfo);
+								maps.put("dataInfo",dataInfo);
+								GameConJPanel.callBack(ClientConfig.waitOtherPeople,JsonTools.getData(maps));
+							}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
+								GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
 							}
-						}else if(icommand.header.id == CommandID.LoginOut) { //退出登录协议
-							if("退出成功".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.loginOutSuccess);
-							}else if("退出失败".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.loginOutError);
-							}
-						}else if(icommand.header.id == CommandID.Register) {//注册协议
-							if("注册成功".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.registerSuccess);
-							}else if("注册失败".equals(headInfo)) {
-								GameConJPanel.callBack(ClientConfig.registerError, dataInfo);
-							}
-						}else if(icommand.header.id == CommandID.GuestLogin) {//游客登录协议
-							//拿到服务器给的游客名字,存放到本地,下次客户端先从本地拿取游客名字
-							GameConJPanel.callBack(ClientConfig.guestNameSuccess,dataInfo);
-						}else if(icommand.header.id == CommandID.GeneralInformation) {//普通信息协议
-							GameConJPanel.callBack(ClientConfig.common,dataInfo);
-						}else if(icommand.header.id == CommandID.GamePreparingError) {//游戏准备错误协议
-							GameConJPanel.callBack(ClientConfig.gamePreparingError,dataInfo);
-						}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
-							GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
-						}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
-							System.out.println("dataInfo-------="+dataInfo);
-							GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
-						}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
-							Map<String,String> maps = new HashMap<String,String>();
-							maps.put("headInfo", headInfo);
-							maps.put("dataInfo",dataInfo);
-							GameConJPanel.callBack(ClientConfig.waitOtherPeople,JsonTools.getData(maps));
-						}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
-							GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
 						}
 					}
 					

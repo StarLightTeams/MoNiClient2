@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import config.ClientConfig;
+import config.entity.Log;
 import entity.game.Ball;
 import entity.game.Board;
 import entity.game.BoardProps;
