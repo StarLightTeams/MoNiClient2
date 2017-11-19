@@ -99,7 +99,7 @@ public class ClientTools{
 		public synchronized void run() {
 			while(isLive) {
 				try {
-					byte[] b = new byte[45056*2];
+					byte[] b = new byte[45056];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
 					System.out.println("len="+len);

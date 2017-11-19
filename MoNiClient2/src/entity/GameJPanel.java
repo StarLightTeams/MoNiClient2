@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import clienttool.ClientTools;
 import config.ClientConfig;
 import config.entity.Log;
 import entity.game.Ball;
@@ -26,10 +28,13 @@ import entity.game.Game;
 import entity.game.bfbData.BfbBall;
 import entity.game.bfbData.BfbBoard;
 import entity.game.bfbData.BfbBrick;
+import entity.info.Info;
+import entity.rule.agreement.GameDataCommand;
 import tool.ConverTool;
 import tool.GameTools;
+import tool.JsonTools;
 
-public class GameJPanel extends JPanel implements Runnable,MouseMotionListener{
+public class GameJPanel extends JPanel implements MouseMotionListener{
 	
 	public JTextPaneUP jtp;
 	//ÇòµÄÁÐ±í
@@ -49,6 +54,11 @@ public class GameJPanel extends JPanel implements Runnable,MouseMotionListener{
 	public int pX;
 	public int pY;
 	
+	public Map<String,String> maps = new HashMap<String, String>();
+	String roomType;
+	String roomId;
+	ClientTools clientTools;
+	public boolean isRun = false;
 	
 	public GameJPanel(JTextPaneUP jtp) {
 //		bricks = GameTools.createBrickList(20,0,100,100,60,jtp);
@@ -57,14 +67,20 @@ public class GameJPanel extends JPanel implements Runnable,MouseMotionListener{
 		addMouseMotionListener(this);
 	}
 	
-	public void loadUI(Game game) {
+	public void loadUI(Game game,String roomType,String roomId,ClientTools clientTools) {
 		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
 		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.myBrickList));
 		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.enemyBrickList));
 		this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
 		this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
-		this.boardPropsmap = boardPropsmap;
+//		this.boardPropsmap = boardPropsmap;
 		isBegin = true;
+		this.roomId = roomId;
+		this.roomType = roomType;
+		this.clientTools = clientTools;
+		isRun = true;
+		maps.put("roomType", roomType);
+		maps.put("roomId", roomType);
 	}
 	
 	@Override
@@ -93,20 +109,46 @@ public class GameJPanel extends JPanel implements Runnable,MouseMotionListener{
 			
 		}
 	}
-
-	public void run() {
-		while(true) {
-			repaint();
-			//ÐÝÃß
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.out.println("ÐÝÃßÊ§°Ü");
+	
+	public void startGame() {
+		new Thread(new Runnable() {
+			
+			public void run() {
+				while(isRun) {
+//					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+//					maps.put("Game",JsonTools.getString(game));
+					clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("ÓÎÏ·Êý¾Ý","hello")), jtp);
+					
+					
+					repaint();
+					//ÐÝÃß
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						System.out.println("ÐÝÃßÊ§°Ü");
+					}
+				}
 			}
-		}
-		
+		}).start();
 	}
+
+//	public void run() {
+//		while(isRun) {
+//			
+//			
+//			
+//			repaint();
+//			//ÐÝÃß
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//				System.out.println("ÐÝÃßÊ§°Ü");
+//			}
+//		}
+//		
+//	}
 
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -122,7 +164,13 @@ public class GameJPanel extends JPanel implements Runnable,MouseMotionListener{
 			moveX = ClientConfig.GAMEWIDTH-myborad.width/2;
 		}
 		myborad.setLocX(moveX);
-		
+//		new Thread(new Runnable() {
+//			public synchronized void run() {
+//				Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+//				maps.put("Game",JsonTools.getString(game));
+//				clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("ÓÎÏ·Êý¾Ý",JsonTools.getData(maps))), jtp);
+//			}
+//		}).start();
 	}
 	
 	/**

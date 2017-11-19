@@ -433,9 +433,8 @@ public class GameConJPanel extends JPanel{
 			Game game = (Game) JsonTools.parseJson(gameData);
 			Log.d(game.toString());
 			//加载游戏
-			gameJPanel.loadUI(game);
-			gameThread = new Thread(gameJPanel,"game");
-			gameThread.start();
+			gameJPanel.loadUI(game,roomId,roomType,clientTools);
+			gameJPanel.startGame();
 			gameJPanel.updateUI();
 			jtp.addString("开始游戏",Color.green);
 			//发送加载完成
