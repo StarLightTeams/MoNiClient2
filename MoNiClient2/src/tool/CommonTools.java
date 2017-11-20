@@ -46,7 +46,7 @@ public class CommonTools {
 	 * @return
 	 */
 	public static int getRoomPeopleNumByRoomType(String roomType) {
-		return Integer.parseInt(roomType.split(":")[0]);
+		return Integer.parseInt(roomType.split("-")[0]);
 	}
 	
 	//创建房间的类型

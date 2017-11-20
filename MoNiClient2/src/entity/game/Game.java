@@ -64,12 +64,12 @@ public class Game {
 	public void setEnemyborad(Board enemyborad) {
 		this.enemyborad = enemyborad;
 	}
-//	public Map<Integer, BoardProps> getBoardPropsmap() {
-//		return boardPropsmap;
-//	}
-//	public void setBoardPropsmap(Map<Integer, BoardProps> boardPropsmap) {
-//		this.boardPropsmap = boardPropsmap;
-//	}
+	public Map<Integer, BoardProps> getBoardPropsmap() {
+		return boardPropsmap;
+	}
+	public void setBoardPropsmap(Map<Integer, BoardProps> boardPropsmap) {
+		this.boardPropsmap = boardPropsmap;
+	}
 	@Override
 	public String toString() {
 		return "Game [ball_list=" + ball_list + ", myBrickList=" + myBrickList + ", enemyBrickList=" + enemyBrickList

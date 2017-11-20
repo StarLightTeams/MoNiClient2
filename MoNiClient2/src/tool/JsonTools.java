@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.security.auth.Subject;
@@ -325,6 +326,7 @@ public class JsonTools {
 					boardProps.setPropsInfo(boardPropsObject.getString("propsInfo"));
 					boardPropsmaps.put(Integer.parseInt(index), boardProps);
 				}
+				
 				game.boardPropsmap = boardPropsmaps;
 				
 				return game;

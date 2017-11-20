@@ -12,7 +12,7 @@ public class ThreadTools {
 		Thread[] lists = findAllThreads();
 		for(Thread t:lists) {
 			int index;
-			if((index = t.getName().lastIndexOf(":"))!=-1) {
+			if((index = t.getName().lastIndexOf("-"))!=-1) {
 				System.out.println(t.getName());
 				String clientName = t.getName().substring(0,index );
 				if(clientName.equals(clientId)) {

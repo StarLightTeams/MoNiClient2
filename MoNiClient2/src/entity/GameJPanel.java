@@ -59,6 +59,7 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	String roomId;
 	ClientTools clientTools;
 	public boolean isRun = false;
+	String clientName;
 	
 	public GameJPanel(JTextPaneUP jtp) {
 //		bricks = GameTools.createBrickList(20,0,100,100,60,jtp);
@@ -67,7 +68,7 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		addMouseMotionListener(this);
 	}
 	
-	public void loadUI(Game game,String roomType,String roomId,ClientTools clientTools) {
+	public void loadUI(Game game,String roomType,String roomId,ClientTools clientTools,String clientName) {
 		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
 		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.myBrickList));
 		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.enemyBrickList));
@@ -81,7 +82,24 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		isRun = true;
 		maps.put("roomType", roomType);
 		maps.put("roomId", roomId);
-		maps.put("clientName", clientTools.clientName);
+		maps.put("clientName", clientName);
+		this.clientName = clientName;
+	}
+	
+	public void refreshUI(Game game,String roomType,String roomId) {
+		this.ball_list = game.ball_list;
+		this.myBrickList = game.myBrickList;
+		this.enemyBrickList = game.enemyBrickList;
+//		this.myborad = game.myborad;
+		this.enemyborad.locX = game.myborad.locX;
+		this.boardPropsmap = game.boardPropsmap;
+		
+		this.roomId = roomId;
+		this.roomType = roomType;
+		
+		maps.put("roomType", roomType);
+		maps.put("roomId", roomId);
+		maps.put("clientName", clientName);
 	}
 	
 	@Override

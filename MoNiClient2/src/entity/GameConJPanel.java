@@ -99,8 +99,8 @@ public class GameConJPanel extends JPanel{
 	
 	public static ClientTools clientTools = null;
 	String nameFlag = "2";
-	String serverName; //服务器id ip+':'+port+':'+nameFlag
-	public static String clientName; //客户端id ip+':'+port
+	String serverName; //服务器id ip+'-'+port+'-'+nameFlag
+	public static String clientName; //客户端id ip+'-'+port
 	Thread sendThread = null;
 	
 	static FileTools fileTools;
@@ -140,7 +140,7 @@ public class GameConJPanel extends JPanel{
 						conLab.setText("连接成功");
 						conFlag = true;
 						conBtn.setText("断开");
-						serverName = socket.getInetAddress().toString().substring(1)+":"+socket.getPort()+":"+nameFlag;
+						serverName = socket.getInetAddress().toString().substring(1)+"-"+socket.getPort()+"-"+nameFlag;
 						clientTools = new ClientTools(socket,serverName,clientName);
 						String path = this.getClass().getClassLoader().getResource("").getPath(); // 得到的是 ClassPath的绝对URI路径
 						System.out.println(path);
@@ -223,7 +223,7 @@ public class GameConJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.login;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+"-"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -248,7 +248,7 @@ public class GameConJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.QQ;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+"-"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -273,7 +273,7 @@ public class GameConJPanel extends JPanel{
 						if(!userName.equals("")&&!password.equals("")) {
 							loginType = ClientConfig.weChat;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+":"+cPort)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(userName,password,loginType,cIp+"-"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -298,7 +298,7 @@ public class GameConJPanel extends JPanel{
 						if(!userName.equals("")&&GuestId!=0) {
 							loginType = ClientConfig.Guest;
 							//发送登录协议信息
-							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(GuestId,GuestName,"1",loginType,cIp+":"+cPort)), jtp);
+							clientTools.sendOnceMessage(new LoginCommand(), JsonTools.getString(new Player(GuestId,GuestName,"1",loginType,cIp+"-"+cPort)), jtp);
 						}else{
 							jtp.addErrString("用户名或密码不能为空");
 						}
@@ -321,7 +321,7 @@ public class GameConJPanel extends JPanel{
 					String password = userPassword.getText().trim();
 					if(!userName.equals("")&&!password.equals("")) {
 						//发送注册信息给服务器(比如玩家的一些信息Player)
-						clientTools.sendOnceMessage(new RegisterCommand() ,JsonTools.getString(new Player(userName,password,cIp+":"+cPort)), jtp);
+						clientTools.sendOnceMessage(new RegisterCommand() ,JsonTools.getString(new Player(userName,password,cIp+"-"+cPort)), jtp);
 					}else{
 						jtp.addErrString("用户名或密码不能为空");
 					}
@@ -338,7 +338,7 @@ public class GameConJPanel extends JPanel{
 				String gType = (String) gameType.getSelectedItem();
 				Map<String,String> map = new HashMap();
 				map.put("gameType", CommonTools.selectGameType(gType));
-				map.put("clientId", cIp+":"+cPort);
+				map.put("clientId", cIp+"-"+cPort);
 				//房卡(待完善)
 				map.put("roomKey", 1+"");
 				String data = JsonTools.getData(map);
@@ -399,7 +399,7 @@ public class GameConJPanel extends JPanel{
 			Map<String,String> maps = JsonTools.parseData(data);
 			cIp = maps.get("cIp");
 			cPort = maps.get("cPort");
-			clientName = cIp+":"+cPort;
+			clientName = cIp+"-"+cPort;
 			System.out.println("cIp="+cIp+",cPort="+cPort);
 		}else if(type == ClientConfig.guestNameSuccess) {
 			//赋值保存到客户端本地
@@ -437,7 +437,8 @@ public class GameConJPanel extends JPanel{
 			mmaps.put("roomType",roomType);
 			mmaps.put("roomId", roomId);
 			//加载游戏
-			gameJPanel.loadUI(game,roomId,roomType,clientTools);
+			gameJPanel.loadUI(game,roomType,roomId,clientTools,clientName);
+			System.out.println("clientName==="+clientName);
 			gameJPanel.updateUI();
 			//发送加载完成
 			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",JsonTools.getData(mmaps))),jtp);
@@ -452,8 +453,12 @@ public class GameConJPanel extends JPanel{
 			gameJPanel.startGame();
 			jtp.addString(data,Color.green);
 		}else if(type == ClientConfig.gameData) {
-//			Map<String,String> maps = JsonTools.p
-			Log.d("---");
+			Map<String, String> maps =JsonTools.pasreObjectData(data);
+			roomId = maps.get("roomId"); 
+			String roomType = maps.get("roomType");
+			String gameData = maps.get("Game");
+			Game game = (Game) JsonTools.parseJson(gameData);
+			gameJPanel.refreshUI(game,roomType,roomId);
 		}
 				
 	}
