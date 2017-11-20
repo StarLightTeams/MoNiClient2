@@ -70,6 +70,9 @@ public class ClientConfig {
 	//游戏正式开始
 	public static final int gameStart = 14;
 	
+	//游戏数据
+	public static final int gameData = 15;
+	
 
 }
 

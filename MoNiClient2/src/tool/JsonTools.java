@@ -226,7 +226,7 @@ public class JsonTools {
 			}else if("Info".equals(className)){
 				Info info = new Info();
 				info.setHeadInfo(jObject.getJSONObject("data").getString("headInfo"));
-				info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo"));
+				info.setDataInfo(jObject.getJSONObject("data").getString("dataInfo").equals("")?"1":jObject.getJSONObject("data").getString("dataInfo"));
 				System.out.println(info.getHeadInfo()+","+info.getDataInfo());
 				return info;
 			}else if("Game".equals(className)){//游戏数据参数

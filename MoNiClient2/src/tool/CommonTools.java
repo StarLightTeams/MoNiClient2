@@ -10,6 +10,7 @@ import config.GameConfig;
  * 通用工具
  */
 public class CommonTools {
+	
 	/**
 	 * 遍历map
 	 */
@@ -50,6 +51,6 @@ public class CommonTools {
 	
 	//创建房间的类型
 	public static String createRoomType(int peoplecount,int roomtype) {
-		return peoplecount+":"+roomtype;
+		return peoplecount+"-"+roomtype;
 	}
 }

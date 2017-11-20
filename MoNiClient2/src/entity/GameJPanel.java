@@ -73,14 +73,15 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.enemyBrickList));
 		this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
 		this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
-//		this.boardPropsmap = boardPropsmap;
+		this.boardPropsmap = game.boardPropsmap;
 		isBegin = true;
 		this.roomId = roomId;
 		this.roomType = roomType;
 		this.clientTools = clientTools;
 		isRun = true;
 		maps.put("roomType", roomType);
-		maps.put("roomId", roomType);
+		maps.put("roomId", roomId);
+		maps.put("clientName", clientTools.clientName);
 	}
 	
 	@Override
@@ -113,11 +114,13 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	public void startGame() {
 		new Thread(new Runnable() {
 			
-			public void run() {
+			public synchronized void run() {
 				while(isRun) {
-//					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
-//					maps.put("Game",JsonTools.getString(game));
-					clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据","hello")), jtp);
+					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+					maps.put("Game",JsonTools.getString(game));
+					System.out.println("JsonTools.getString(new Info(\"游戏数据\",JsonTools.getData(maps)))="+JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))));
+					clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))), jtp);
+					
 					
 					
 					repaint();
@@ -133,22 +136,6 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		}).start();
 	}
 
-//	public void run() {
-//		while(isRun) {
-//			
-//			
-//			
-//			repaint();
-//			//休眠
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//				System.out.println("休眠失败");
-//			}
-//		}
-//		
-//	}
 
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -164,13 +151,6 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 			moveX = ClientConfig.GAMEWIDTH-myborad.width/2;
 		}
 		myborad.setLocX(moveX);
-//		new Thread(new Runnable() {
-//			public synchronized void run() {
-//				Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
-//				maps.put("Game",JsonTools.getString(game));
-//				clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))), jtp);
-//			}
-//		}).start();
 	}
 	
 	/**

@@ -6,12 +6,13 @@ import java.util.Map;
 import org.junit.Test;
 
 import config.entity.Log;
+import entity.game.Board;
 import entity.rooms.Room;
 
 /*
  * 创建房间的工具类，所有的创建房间所需的工具
  */
-public class RoomTools {
+public class RoomTools {	
 	
 	/**
 	 * 通过房间类型获得房间的最大人数
@@ -19,12 +20,12 @@ public class RoomTools {
 	 * @return
 	 */
 	public static int getRoomPeopleNumByRoomType(String roomType) {
-		return Integer.parseInt(roomType.split(":")[0]);
+		return Integer.parseInt(roomType.split("-")[0]);
 	}
 	
 	//创建房间的类型
 	public static String createRoomType(int peoplecount,int roomtype) {
-		return peoplecount+":"+roomtype;
+		return peoplecount+"-"+roomtype;
 	}
 
 	//创建房间id
@@ -53,6 +54,6 @@ public class RoomTools {
 	
 	@Test
 	public void test() {
-		System.out.println(RoomTools.getRoomPeopleNumByRoomType("1:s"));
+		System.out.println(RoomTools.getRoomPeopleNumByRoomType("1-s"));
 	}
 }

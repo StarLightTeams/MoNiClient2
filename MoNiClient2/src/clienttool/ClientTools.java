@@ -76,13 +76,18 @@ public class ClientTools{
 	}
 	
 	//发送数据
-	public  void  sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
+	public synchronized void sendOnceMessage(ICommand iCommand,String str,JTextPaneUP jtp) {
 		try {
 			jtp.addString("["+serverName+"s"+"]:"+str);
 			OutputStream os = s.getOutputStream();
 			DataBuffer data = createAgreeMentMessage(iCommand, str);
 			os.write(data.readByte());
 			os.flush();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +107,7 @@ public class ClientTools{
 					byte[] b = new byte[45056];
 					InputStream is = s.getInputStream();
 					int len = is.read(b);
-					System.out.println("len="+len);
+//					System.out.println("len="+len);
 					if(len == -1) { //证明在服务器中已经把客户端关闭
 						//关闭线程
 						isLive = false;
@@ -159,6 +164,8 @@ public class ClientTools{
 								GameConJPanel.callBack(ClientConfig.waitOtherPeople,JsonTools.getData(maps));
 							}else if(icommand.header.id == CommandID.GameStart) {//游戏开始
 								GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
+							}else if(icommand.header.id == CommandID.GameData) {
+								GameConJPanel.callBack(ClientConfig.gameData,dataInfo);
 							}
 						}
 					}

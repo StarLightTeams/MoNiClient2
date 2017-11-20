@@ -428,26 +428,32 @@ public class GameConJPanel extends JPanel{
 			roomId = maps.get("roomId"); 
 			String roomType = maps.get("roomType");
 			String gameData = maps.get("Game");
-			Log.d("gameData="+gameData);
-			System.out.println("roomId="+roomId+",roomType="+roomType);
+//			Log.d("gameData="+gameData);
+//			System.out.println("roomId="+roomId+",roomType="+roomType);
 			Game game = (Game) JsonTools.parseJson(gameData);
-			Log.d(game.toString());
+//			Log.d(game.toString());
+			jtp.addString("开始游戏",Color.green);
+			Map<String,String> mmaps = new HashMap<String, String>();
+			mmaps.put("roomType",roomType);
+			mmaps.put("roomId", roomId);
 			//加载游戏
 			gameJPanel.loadUI(game,roomId,roomType,clientTools);
-			gameJPanel.startGame();
 			gameJPanel.updateUI();
-			jtp.addString("开始游戏",Color.green);
 			//发送加载完成
-			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",data)),jtp);
+			clientTools.sendOnceMessage(new GameLoadingCommand(),JsonTools.getString(new Info("加载完成",JsonTools.getData(mmaps))),jtp);
 		}else if(type == ClientConfig.waitOtherPeople) {
 			Map<String,String> maps = JsonTools.pasreObjectData(data);
 			String headInfo = maps.get("headInfo");
 			String dataInfo = maps.get("dataInfo");
 			room = (Room) JsonTools.parseJson(dataInfo);
-			Log.d(room.toString());
+//			Log.d(room.toString());
 			jtp.addString(headInfo, Color.GREEN);
 		}else if(type == ClientConfig.gameStart){
+			gameJPanel.startGame();
 			jtp.addString(data,Color.green);
+		}else if(type == ClientConfig.gameData) {
+//			Map<String,String> maps = JsonTools.p
+			Log.d("---");
 		}
 				
 	}
