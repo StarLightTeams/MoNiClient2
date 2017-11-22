@@ -70,8 +70,8 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	
 	public void loadUI(Game game,String roomType,String roomId,ClientTools clientTools,String clientName) {
 		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
-		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.myBrickList));
-		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brick(game.enemyBrickList));
+		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.myBrickList));
+		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.enemyBrickList));
 		this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
 		this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
 		this.boardPropsmap = game.boardPropsmap;
@@ -84,15 +84,24 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		maps.put("roomId", roomId);
 		maps.put("clientName", clientName);
 		this.clientName = clientName;
+		maps.put("clientSceenWidth",ClientConfig.GAMEWIDTH+"");
+		maps.put("clientSceenHeight",ClientConfig.GAMEHEIGHT+"");
 	}
 	
 	public void refreshUI(Game game,String roomType,String roomId) {
-		this.ball_list = game.ball_list;
-		this.myBrickList = game.myBrickList;
-		this.enemyBrickList = game.enemyBrickList;
-//		this.myborad = game.myborad;
-		this.enemyborad.locX = game.myborad.locX;
+		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
+		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.myBrickList));
+		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.enemyBrickList));
+//		this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
+		this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
+		this.enemyborad.locX = ConverTool.reduction_board(ConverTool.conver_board(game.myborad)).locX;
 		this.boardPropsmap = game.boardPropsmap;
+//		this.ball_list = game.ball_list;
+//		this.myBrickList = game.myBrickList;
+//		this.enemyBrickList = game.enemyBrickList;
+//		this.myborad = game.myborad;
+//		this.enemyborad.locX = game.myborad.locX;
+//		this.boardPropsmap = game.boardPropsmap;
 		
 		this.roomId = roomId;
 		this.roomType = roomType;
@@ -100,6 +109,9 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		maps.put("roomType", roomType);
 		maps.put("roomId", roomId);
 		maps.put("clientName", clientName);
+		maps.put("clientSceenWidth",ClientConfig.GAMEWIDTH+"");
+		maps.put("clientSceenHeight",ClientConfig.GAMEHEIGHT+"");
+		
 	}
 	
 	@Override
@@ -126,6 +138,8 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 			
 			enemyborad.draw(g);
 			
+			this.updateUI();
+			
 		}
 	}
 	
@@ -134,7 +148,22 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 			
 			public synchronized void run() {
 				while(isRun) {
-					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+					List<BfbBall> BfbBalls = ConverTool.conver_ballList(ball_list,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					List<Ball> bs = ConverTool.reduction_ballList(BfbBalls, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+					
+					List<BfbBrick> BfbMyBricks = ConverTool.conver_brickList(myBrickList,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					List<Brick> myBk = ConverTool.reduction_brickList(BfbMyBricks, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+					
+					List<BfbBrick> BfbEnemyBricks = ConverTool.conver_brickList(enemyBrickList,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					List<Brick> enemyBk = ConverTool.reduction_brickList(BfbEnemyBricks,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+					
+					BfbBoard BfbMyBorad = ConverTool.conver_board(myborad,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					Board myBd = ConverTool.reduction_board(BfbMyBorad,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+					
+					BfbBoard BfbEnemyBorad = ConverTool.conver_board(enemyborad,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					Board enemyBd = ConverTool.reduction_board(BfbEnemyBorad, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+//					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+					Game game = new Game(bs, myBk, enemyBk, myBd, enemyBd, boardPropsmap);
 					maps.put("Game",JsonTools.getString(game));
 					System.out.println("JsonTools.getString(new Info(\"游戏数据\",JsonTools.getData(maps)))="+JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))));
 					clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))), jtp);
