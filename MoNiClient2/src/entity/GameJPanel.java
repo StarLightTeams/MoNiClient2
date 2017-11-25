@@ -29,8 +29,10 @@ import entity.game.bfbData.BfbBall;
 import entity.game.bfbData.BfbBoard;
 import entity.game.bfbData.BfbBrick;
 import entity.info.Info;
+import entity.rule.agreement.GameDataBoardCommand;
 import entity.rule.agreement.GameDataCommand;
 import tool.ConverTool;
+import tool.FileTools;
 import tool.GameTools;
 import tool.JsonTools;
 
@@ -53,6 +55,7 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	//鼠标的位置
 	public int pX;
 	public int pY;
+	Game game;
 	
 	public Map<String,String> maps = new HashMap<String, String>();
 	String roomType;
@@ -60,6 +63,8 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	ClientTools clientTools;
 	public boolean isRun = false;
 	String clientName;
+	String type ="1";
+	float moveX;
 	
 	public GameJPanel(JTextPaneUP jtp) {
 //		bricks = GameTools.createBrickList(20,0,100,100,60,jtp);
@@ -69,6 +74,7 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 	}
 	
 	public void loadUI(Game game,String roomType,String roomId,ClientTools clientTools,String clientName) {
+		this.game = game;
 		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
 		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.myBrickList));
 		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.enemyBrickList));
@@ -84,38 +90,30 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		maps.put("roomId", roomId);
 		maps.put("clientName", clientName);
 		this.clientName = clientName;
-		maps.put("clientSceenWidth",ClientConfig.GAMEWIDTH+"");
-		maps.put("clientSceenHeight",ClientConfig.GAMEHEIGHT+"");
 	}
 	
-	public void refreshUI(Game game,String roomType,String roomId) {
+	public synchronized void refreshBoardUI(Game game,String roomType,String roomId) {
+//		repaint();
+	}
+	
+	public synchronized void refreshUI(Game game,String roomType,String roomId,String receiveType) {
 		this.ball_list = ConverTool.reduction_ballList(ConverTool.conver_ballList(game.ball_list));
-		this.myBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.myBrickList));
-		this.enemyBrickList = ConverTool.reduction_brickList(ConverTool.conver_brickList(game.enemyBrickList));
-//		this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
-		this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
-		this.enemyborad.locX = ConverTool.reduction_board(ConverTool.conver_board(game.myborad)).locX;
+//		if(type.equals("1")) {
+			this.myborad = ConverTool.reduction_board(ConverTool.conver_board(game.myborad));
+//		}else if(type.equals("2")) {
+			this.enemyborad = ConverTool.reduction_board(ConverTool.conver_board(game.enemyborad));
+//			this.enemyborad.locX = ConverTool.reduction_board(ConverTool.conver_board(game.myborad)).locX;
+//		}
 		this.boardPropsmap = game.boardPropsmap;
-//		this.ball_list = game.ball_list;
-//		this.myBrickList = game.myBrickList;
-//		this.enemyBrickList = game.enemyBrickList;
-//		this.myborad = game.myborad;
-//		this.enemyborad.locX = game.myborad.locX;
-//		this.boardPropsmap = game.boardPropsmap;
-		
 		this.roomId = roomId;
 		this.roomType = roomType;
-		
-		maps.put("roomType", roomType);
-		maps.put("roomId", roomId);
-		maps.put("clientName", clientName);
-		maps.put("clientSceenWidth",ClientConfig.GAMEWIDTH+"");
-		maps.put("clientSceenHeight",ClientConfig.GAMEHEIGHT+"");
-		
+		this.game = game;
+		new FileTools("D://client"+clientName+".txt").writeFile(clientName+"="+"ball_list"+this.ball_list.toString()+"\n"+",enemyborad="+enemyborad.toString()+"\n"+",myboard="+myborad.toString()+"\n");
+//		repaint();
 	}
 	
 	@Override
-	public void paint(Graphics g) {
+	public synchronized void paint(Graphics g) {
 		super.paint(g);
 		if(isBegin) {
 			//640*1136
@@ -138,14 +136,11 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 			
 			enemyborad.draw(g);
 			
-			this.updateUI();
-			
 		}
-	}
+	}                      
 	
 	public void startGame() {
 		new Thread(new Runnable() {
-			
 			public synchronized void run() {
 				while(isRun) {
 					List<BfbBall> BfbBalls = ConverTool.conver_ballList(ball_list,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
@@ -157,20 +152,20 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 					List<BfbBrick> BfbEnemyBricks = ConverTool.conver_brickList(enemyBrickList,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
 					List<Brick> enemyBk = ConverTool.reduction_brickList(BfbEnemyBricks,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
 					
-					BfbBoard BfbMyBorad = ConverTool.conver_board(myborad,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+					Board bb = myborad;
+					bb.setLocX(moveX);
+					BfbBoard BfbMyBorad = ConverTool.conver_board(bb,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
 					Board myBd = ConverTool.reduction_board(BfbMyBorad,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
 					
 					BfbBoard BfbEnemyBorad = ConverTool.conver_board(enemyborad,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
 					Board enemyBd = ConverTool.reduction_board(BfbEnemyBorad, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
-//					Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
-					Game game = new Game(bs, myBk, enemyBk, myBd, enemyBd, boardPropsmap);
-					maps.put("Game",JsonTools.getString(game));
-					System.out.println("JsonTools.getString(new Info(\"游戏数据\",JsonTools.getData(maps)))="+JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))));
+					
+					Game game1 = new Game(bs, myBk, enemyBk, myBd, enemyBd, boardPropsmap);
+					maps.put("Game",JsonTools.getString(game1));
 					clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))), jtp);
 					
-					
-					
 					repaint();
+					
 					//休眠
 					try {
 						Thread.sleep(100);
@@ -189,15 +184,42 @@ public class GameJPanel extends JPanel implements MouseMotionListener{
 		
 	}
 
-	public void mouseMoved(MouseEvent e) {
-		//鼠标控制移动myBoard,范围不超过左边框和右边框
-		float moveX = e.getX();
-		if(moveX<=myborad.width/2){
-			moveX = myborad.width/2;
-		}else if(moveX >=ClientConfig.GAMEWIDTH-myborad.width/2){
-			moveX = ClientConfig.GAMEWIDTH-myborad.width/2;
-		}
-		myborad.setLocX(moveX);
+	public synchronized void mouseMoved(MouseEvent e) {
+			//鼠标控制移动myBoard,范围不超过左边框和右边框
+			moveX = e.getX();
+			if(moveX<=myborad.width/2){
+				moveX = myborad.width/2;
+			}else if(moveX >=ClientConfig.GAMEWIDTH-myborad.width/2){
+				moveX = ClientConfig.GAMEWIDTH-myborad.width/2;
+			}
+//			if(isRun) {
+//				List<BfbBall> BfbBalls = ConverTool.conver_ballList(ball_list,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+//				List<Ball> bs = ConverTool.reduction_ballList(BfbBalls, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+//				
+//				List<BfbBrick> BfbMyBricks = ConverTool.conver_brickList(myBrickList,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+//				List<Brick> myBk = ConverTool.reduction_brickList(BfbMyBricks, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+//				
+//				List<BfbBrick> BfbEnemyBricks = ConverTool.conver_brickList(enemyBrickList,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+//				List<Brick> enemyBk = ConverTool.reduction_brickList(BfbEnemyBricks,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+//				
+//				Board bb = myborad;
+//				bb.setLocX(moveX);
+//				BfbBoard BfbMyBorad = ConverTool.conver_board(bb,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+//				Board myBd = ConverTool.reduction_board(BfbMyBorad,ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+//				
+//				BfbBoard BfbEnemyBorad = ConverTool.conver_board(enemyborad,ClientConfig.GAMEWIDTH,ClientConfig.GAMEHEIGHT);
+//				Board enemyBd = ConverTool.reduction_board(BfbEnemyBorad, ClientConfig.GAMEREALYWIDTH, ClientConfig.GAMEREALYHEIGHT);
+////			enemyBd.locX = ConverTool.reduction_board(ConverTool.conver_board(myborad)).locX;
+////			Game game = new Game(ball_list, myBrickList, enemyBrickList, myborad, enemyborad, boardPropsmap);
+//				Game gg = new Game();
+//				gg.myborad = myBd;
+//				gg.enemyborad = enemyBd;
+//				gg.ball_list = bs; 
+//				new FileTools("D://server"+clientName+".txt").writeFile(clientName+"="+",enemyborad="+enemyBd.toString()+"\n"+",myboard="+myBd.toString()+"\n");
+//				maps.put("Game",JsonTools.getString(gg));
+//				clientTools.sendOnceMessage(new GameDataCommand(), JsonTools.getString(new Info("游戏数据",JsonTools.getData(maps))), jtp);
+//			
+//		}
 	}
 	
 	/**

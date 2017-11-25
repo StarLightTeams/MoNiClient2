@@ -73,6 +73,8 @@ public class ClientConfig {
 	//ÓÎÏ·Êı¾İ
 	public static final int gameData = 15;
 	
+	public static final int gameDataBoard = 16;
+	
 
 }
 

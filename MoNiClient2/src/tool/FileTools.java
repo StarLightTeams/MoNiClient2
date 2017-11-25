@@ -37,7 +37,7 @@ public class FileTools {
 	public boolean writeFile(String str) {
 		FileOutputStream fos = null;
 	    try {
-			fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file,true);
 			//转换为byte数组
 			byte[] b = str.getBytes();
 			fos.write(b);

@@ -194,8 +194,6 @@ public class JsonTools {
 		if(!str.equals("")) {
 			if(str.charAt(0)=='{') {
 				int index = findStrLastIndex(str);
-				System.out.println("index======="+index);
-				System.out.println("str.charAt(index)========"+str.charAt(index));
 				if(str.charAt(index)=='}') {
 					return true;
 				}else {

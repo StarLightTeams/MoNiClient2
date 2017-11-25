@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -83,11 +85,6 @@ public class ClientTools{
 			DataBuffer data = createAgreeMentMessage(iCommand, str);
 			os.write(data.readByte());
 			os.flush();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +152,6 @@ public class ClientTools{
 							}else if(icommand.header.id == CommandID.VerifyStateErr) {//验证错误协议
 								GameConJPanel.callBack(ClientConfig.verifyStateErr,dataInfo);
 							}else if(icommand.header.id == CommandID.VerifyState) {//验证协议
-								System.out.println("dataInfo-------="+dataInfo);
 								GameConJPanel.callBack(ClientConfig.verifyState,dataInfo);
 							}else if(icommand.header.id == CommandID.WaitOtherPeople) {//等待其他玩家
 								Map<String,String> maps = new HashMap<String,String>();
@@ -166,6 +162,8 @@ public class ClientTools{
 								GameConJPanel.callBack(ClientConfig.gameStart,headInfo);
 							}else if(icommand.header.id == CommandID.GameData) {
 								GameConJPanel.callBack(ClientConfig.gameData,dataInfo);
+							}else if(icommand.header.id == CommandID.GameDataBoard) {
+								GameConJPanel.callBack(ClientConfig.gameDataBoard,dataInfo);
 							}
 						}
 					}

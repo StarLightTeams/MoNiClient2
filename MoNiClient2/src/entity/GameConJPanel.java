@@ -137,18 +137,19 @@ public class GameConJPanel extends JPanel{
 					conFlag = false;
 				}else {
 					if(serviceConnect(ip,port)){
+						serverName = socket.getInetAddress().toString().substring(1)+"-"+socket.getPort()+"-"+nameFlag;
+						clientTools = new ClientTools(socket,serverName,clientName);
+						//接受信息
+						clientTools.receiveMessage(jtp);
 						conLab.setText("连接成功");
 						conFlag = true;
 						conBtn.setText("断开");
-						serverName = socket.getInetAddress().toString().substring(1)+"-"+socket.getPort()+"-"+nameFlag;
-						clientTools = new ClientTools(socket,serverName,clientName);
 						String path = this.getClass().getClassLoader().getResource("").getPath(); // 得到的是 ClassPath的绝对URI路径
 						System.out.println(path);
 						fileTools = new FileTools(path+"/GuestName.txt");
-						//接受信息
-						clientTools.receiveMessage(jtp);
 						//如果本地没有游客用户则发送游客名给服务器
 						String data= fileTools.readFile();
+//						System.out.println("data===="+data+"====");
 						if("".equals(data)) {	//为空
 							clientTools.sendOnceMessage(new GuestLoginCommand(),JsonTools.getString(new Info(" ")), jtp);
 						}else {
@@ -349,7 +350,7 @@ public class GameConJPanel extends JPanel{
 	}
 	
 	//接受回调函数
-	public static void callBack(int type) {
+	public synchronized static void callBack(int type) {
 		if(type==ClientConfig.loginInSuccess) {
 			loginInfo.setText("登录成功");
 			switch(loginType) {
@@ -394,7 +395,7 @@ public class GameConJPanel extends JPanel{
 		}
 	}
 	//接受回调函数
-	public static void callBack(int type,String data) {
+	public synchronized static void callBack(int type,String data) {
 		if(type == ClientConfig.connectSuccess) {
 			Map<String,String> maps = JsonTools.parseData(data);
 			cIp = maps.get("cIp");
@@ -457,9 +458,21 @@ public class GameConJPanel extends JPanel{
 			roomId = maps.get("roomId"); 
 			String roomType = maps.get("roomType");
 			String gameData = maps.get("Game");
+			String receiveType = maps.get("type");
+//			String clientId = maps.get("clientName");
 			Game game = (Game) JsonTools.parseJson(gameData);
-			gameJPanel.refreshUI(game,roomType,roomId);
+//			System.out.println("clientId======================="+clientId);
+			gameJPanel.refreshUI(game,roomType,roomId,receiveType);
 		}
+//		else if(type == ClientConfig.gameDataBoard) {
+//			Map<String, String> maps =JsonTools.pasreObjectData(data);
+//			String roomType = maps.get("roomType");
+//			String gameData = maps.get("Game");
+//			String receiveType = maps.get("type");
+//			System.out.println("1111111111111111111111111111111111111111111111111111111111111111111");
+//			Game game = (Game) JsonTools.parseJson(gameData);
+//			gameJPanel.refreshBoardUI(game,roomType,roomId);
+//		}
 				
 	}
 	
