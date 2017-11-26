@@ -459,10 +459,9 @@ public class GameConJPanel extends JPanel{
 			String roomType = maps.get("roomType");
 			String gameData = maps.get("Game");
 			String receiveType = maps.get("type");
-//			String clientId = maps.get("clientName");
+			String clientId = maps.get("clientName");
 			Game game = (Game) JsonTools.parseJson(gameData);
-//			System.out.println("clientId======================="+clientId);
-			gameJPanel.refreshUI(game,roomType,roomId,receiveType);
+			gameJPanel.refreshUI(game,roomType,roomId,clientId);
 		}
 //		else if(type == ClientConfig.gameDataBoard) {
 //			Map<String, String> maps =JsonTools.pasreObjectData(data);
